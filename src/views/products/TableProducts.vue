@@ -184,18 +184,6 @@
           <CCol md="3">
             <CInput label="Nombre" v-model="filters.name" />
           </CCol>
-          <!-- <CCol md="3">
-            <CInput label="Proceso" v-model="filters.process" />
-          </CCol> -->
-          <!-- <CCol md="3">
-            <CSelect
-              :value.sync="filters.type"
-              :options=types
-              @keyup.enter="getProductsWithFilters"
-              label="Tipo"
-              placeholder="Seleccione un tipo"
-            />
-          </CCol> -->
         </CRow>
         <CRow>
           <CCol md="6" class="d-flex align-items-center">
@@ -349,16 +337,11 @@
         default () {
           return [
             { key: 'index', label: '#' },
-            // { key: 'cod_product', label: 'Código' },
             { key: 'name', label: 'Nombre' },
-            // { key: 'type', label: 'Tipo' },
-            // { key: 'process', label: 'Proceso' },
             { key: 'price', label: 'Precio de venta' },
             { key: 'price_purchase', label: 'Precio de compra' },
             { key: 'stock', label: 'Stock' },
-            // { key: 'stock_converted', label: 'Stock (SACO)' },
             { key: 'unit_measure', label: 'UM' },
-            // { key: 'presentation', label: 'Presentación' },
             { key: 'buttonStock', label: 'Stock', _style:'min-width:20%;' },
             { key: 'buttonHistory', label: 'Historial', _style:'min-width:20%;' },
             { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
