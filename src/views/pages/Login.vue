@@ -27,7 +27,7 @@
               ">
                 <CForm style="width: 100%;">
                   <h1 class="text-center">Login</h1>
-                  <p class="text-muted text-center mb-4">Inicia sesión con tu cuenta</p>
+                  <p class="text-muted text-center mb-4">Inicia sesión</p>
                   <CInput
                     v-model="data.username"
                     :disabled="loading"
