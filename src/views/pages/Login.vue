@@ -4,88 +4,8 @@
     style="height: 100vh; display: flex; align-items: center; justify-content: center; position: relative;"
   >
 
-    <!-- Capa Negra Opaca -->
-    <div 
-      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 2;"
-    ></div>
-
-    <!-- Fondo de Imagen -->
-    <div 
-      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('img/avatars/imagen 2.JPG'); background-size: cover; background-position: center center; z-index: 1;"
-    ></div>
 
     <CContainer>
-      <CRow class="justify-content-center">
-        <CCol lg="10" xl="8">
-          <CCardGroup>
-
-            <CCard class="p-4 shadow w-100" style="position: relative; z-index: 3;">
-              <CCardBody style = "
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              ">
-                <CForm style="width: 100%;">
-                  <h1 class="text-center">Login</h1>
-                  <p class="text-muted text-center mb-4">Inicia sesión</p>
-                  <CInput
-                    v-model="data.username"
-                    :disabled="loading"
-                    placeholder="Username"
-                    autocomplete="username email"
-                  >
-                    <template #prepend-content>
-                      <CIcon name="cil-user" />
-                    </template>
-                  </CInput>
-                  <CInput
-                    v-model="data.password"
-                    :disabled="loading"
-                    placeholder="Password"
-                    type="password"
-                    autocomplete="current-password"
-                    class="mt-3"
-                  >
-                    <template #prepend-content>
-                      <CIcon name="cil-lock-locked" />
-                    </template>
-                  </CInput>
-                  <CRow class="mt-4">
-                    <CCol col="6">
-                      <template v-if="loading">
-                        <div class="sk-chase">
-                          <div class="sk-chase-dot"></div>
-                          <div class="sk-chase-dot"></div>
-                          <div class="sk-chase-dot"></div>
-                          <div class="sk-chase-dot"></div>
-                          <div class="sk-chase-dot"></div>
-                          <div class="sk-chase-dot"></div>
-                        </div>
-                      </template>
-                      <template v-else>
-                        <CButton class="px-4 text-white pescanpampa-color" @click="signIn()">Login</CButton>
-                      </template>
-                    </CCol>
-                  </CRow>
-                </CForm>
-              </CCardBody>
-            </CCard>
-
-            <CCard
-              text-color="white"
-              class="text-center py-5 d-md-down-none shadow pescanpampa-color"
-              style="position: relative; z-index: 4;"
-              body-wrapper
-            >
-              <CCardBody>
-                <h2 class="mt-4">BaseFirme</h2>
-                <p>Bienvenido al sistema.</p>
-              </CCardBody>
-            </CCard>
-
-          </CCardGroup>
-        </CCol>
-      </CRow>
     </CContainer>
   </div>
 </template>
