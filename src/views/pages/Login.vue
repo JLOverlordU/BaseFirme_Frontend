@@ -19,7 +19,7 @@
         <CCol lg="10" xl="8">
           <CCardGroup>
 
-            <CCard class="p-4 shadow w-100" style="position: relative; z-index: 3;">
+            
               <CCardBody style = "
                 display: flex;
                 justify-content: center;
@@ -93,7 +93,7 @@
 <script>
 
   import Swal from "sweetalert2"
-  import {signIn} from '../../assets/js/methods/functions.js'
+  import {signIn} from '../../assets/js/methods/function.js'
 
   export default {
     name: 'Login',
@@ -101,7 +101,7 @@
       return {
         prefix: "login",
         data: {
-          username: "",
+          username: ""
           password: "",
         },
         loading: false,
@@ -119,7 +119,7 @@
                               
           if (response.status === 200) {
                         
-            let data = response?.data;
+            let data = response?.data
 
             if(data.flag){
               
@@ -127,7 +127,7 @@
               sessionStorage.setItem('username', data.data?.username);
               sessionStorage.setItem('name', data.data?.name);
               sessionStorage.setItem('email', data.data?.email);
-              sessionStorage.setItem('role_id', data.data?.role_id);
+              sessionStorage.setItem('role_id', data.data?.role_id)
               sessionStorage.setItem('slug_role', data.data?.role?.slug);
               sessionStorage.setItem('role', data.data?.role?.name);
               sessionStorage.setItem('phone', data.data?.phone);
