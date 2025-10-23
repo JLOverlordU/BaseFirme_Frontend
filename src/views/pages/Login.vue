@@ -11,7 +11,7 @@
 
     <!-- Fondo de Imagen -->
     <div 
-      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('img/avatars/imagen 2.JPG'); background-size: cover; background-position: center center; z-index: 1;"
+      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('img/avatars/Background.jpeg'); background-size: cover; background-position: center center; z-index: 1;"
     ></div>
 
     <CContainer>

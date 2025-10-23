@@ -9,7 +9,7 @@
       <CHeaderNavLink>
         <div class="c-avatar">
           <img
-            src="img/avatars/pencaspampa-logo-50px.png"
+            src="img/avatars/BaseFirme-Logo.jpeg"
             class="c-avatar-img "
           />
         </div>
