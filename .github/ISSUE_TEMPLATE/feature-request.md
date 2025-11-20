@@ -2,7 +2,7 @@
 name: Feature request
 about: Solicitar una nueva funcionalidad para el proyecto
 title: "[FEATURE]"
-labels: feature
+labels: 'feature, state: new'
 assignees: ''
 
 ---

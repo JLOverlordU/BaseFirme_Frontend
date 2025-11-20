@@ -2,7 +2,7 @@
 name: Bug report
 about: Reporta un error o problema en la aplicación
 title: "[BUG]"
-labels: bug, feature
+labels: 'bug, state: new'
 assignees: JLOverlordU
 
 ---
