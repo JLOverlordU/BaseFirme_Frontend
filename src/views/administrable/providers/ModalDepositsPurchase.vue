@@ -119,183 +119,183 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {list, save, destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {list, save, destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'ModalDepositsPurchase',
-    props: {
-      isVisible: {
-        type: Boolean,
-        required: true,
-      },
-      purchase: {
-        type: Object,
-        required: false,
-        default: null
-      },
-      fields: {
-        type: Array,
-        default() {
-          return [
-              { key: "index", label: "#" },
-              { key: "user", label: "Usuario" },
-              { key: "date", label: "Día que se realizó el pago" },
-              { key: "amount", label: "Depositó" },
-              { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ];
-        },
-      },
+export default {
+  name: "ModalDepositsPurchase",
+  props: {
+    isVisible: {
+      type: Boolean,
+      required: true,
     },
-    data() {
-      return {
-        prefix_save: "purchase_deposit",
-        prefix_list: "purchases_deposits_history",
-        history: [],
-        purchaseData: {
-          consecutive: "",
-          total: 0,
-          deposit: 0,
-          pending: 0,
-        },
-        filters: {
-          date: "",
-          purchase: 0,
-        },
-        deposit: {
-          amount: "",
-          purchase_id: 0,
-          provider_id: 0,
-        },
-        loading: false,
-      };
+    purchase: {
+      type: Object,
+      required: false,
+      default: null
     },
-    async mounted() {
-      await this.getDepositsHistory();
-    },
-    watch: {
-      async isVisible(newValue) {
-        if (newValue) {
-          await this.getDepositsHistory();
-        }
+    fields: {
+      type: Array,
+      default() {
+        return [
+          { key: "index", label: "#" },
+          { key: "user", label: "Usuario" },
+          { key: "date", label: "Día que se realizó el pago" },
+          { key: "amount", label: "Depositó" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       },
     },
-    computed: {
-      formattedPending() {
-        return this.saleData.pending ? this.saleData.pending.toFixed(4) : '0.0000';
+  },
+  data() {
+    return {
+      prefix_save: "purchase_deposit",
+      prefix_list: "purchases_deposits_history",
+      history: [],
+      purchaseData: {
+        consecutive: "",
+        total: 0,
+        deposit: 0,
+        pending: 0,
+      },
+      filters: {
+        date: "",
+        purchase: 0,
+      },
+      deposit: {
+        amount: "",
+        purchase_id: 0,
+        provider_id: 0,
+      },
+      loading: false,
+    };
+  },
+  async mounted() {
+    await this.getDepositsHistory();
+  },
+  watch: {
+    async isVisible(newValue) {
+      if (newValue) {
+        await this.getDepositsHistory();
       }
     },
-    methods: {
-      async getDepositsHistory(){
+  },
+  computed: {
+    formattedPending() {
+      return this.saleData.pending ? this.saleData.pending.toFixed(4) : "0.0000";
+    }
+  },
+  methods: {
+    async getDepositsHistory(){
 
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
 
-          this.purchaseData.consecutive = this.purchase.consecutive;
-          this.purchaseData.total = this.purchase.subtotal;
-          this.purchaseData.deposit = this.purchase.deposit;
-          // this.purchaseData.pending = this.purchase.subtotal - this.purchase.deposit;
-          this.purchaseData.pending = (this.purchase.subtotal - this.purchase.deposit).toFixed(4);
+        this.purchaseData.consecutive = this.purchase.consecutive;
+        this.purchaseData.total = this.purchase.subtotal;
+        this.purchaseData.deposit = this.purchase.deposit;
+        // this.purchaseData.pending = this.purchase.subtotal - this.purchase.deposit;
+        this.purchaseData.pending = (this.purchase.subtotal - this.purchase.deposit).toFixed(4);
 
-          this.filters.purchase = this.purchase.id;
+        this.filters.purchase = this.purchase.id;
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-          if (response.status === 200) {
-            this.history = response.data.data;
-          }
-
-        } catch (errors) {
-
-          this.history = [];
-
-        } finally {
-
-          this.loading = false;
-
+        if (response.status === 200) {
+          this.history = response.data.data;
         }
 
-      },
-      async saveDeposit(){
+      } catch (errors) {
 
-        this.loading = true;
+        this.history = [];
 
-        try {
+      } finally {
 
-          if(parseFloat(this.deposit.amount) <= 0) {
-            Swal.fire("Alerta", "El depósito debe ser mayor que 0", "warning");
-            this.loading = false;
-            return
-          }
+        this.loading = false;
 
-          if(parseFloat(this.deposit.amount) > parseFloat(this.purchaseData.pending)){
-            Swal.fire("Alerta", "El depósito no puede ser mayor a S/." + this.purchaseData.pending, "warning");
-            this.loading = false;
-            return
-          }
+      }
 
-          this.deposit.purchase_id = this.purchase.id;
-          this.deposit.provider_id = this.purchase.provider.id;
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.deposit);
-          const response = await save(url + this.prefix_save, data);
+    },
+    async saveDeposit(){
 
-          if (response.status === 200) {
+      this.loading = true;
 
-            if(response.data.flag){
+      try {
 
-              await this.getDepositsHistory();
+        if(parseFloat(this.deposit.amount) <= 0) {
+          Swal.fire("Alerta", "El depósito debe ser mayor que 0", "warning");
+          this.loading = false;
+          return;
+        }
 
-              this.$emit("set-amount", parseFloat(this.deposit.amount).toFixed(4));
-              this.cleanData();
-              this.$emit("close-modal-deposits-purchase");
-              this.$emit("get-purchases-by-provider");
+        if(parseFloat(this.deposit.amount) > parseFloat(this.purchaseData.pending)){
+          Swal.fire("Alerta", "El depósito no puede ser mayor a S/." + this.purchaseData.pending, "warning");
+          this.loading = false;
+          return;
+        }
 
-              Swal.fire("Alerta", response.data.message, "success");
+        this.deposit.purchase_id = this.purchase.id;
+        this.deposit.provider_id = this.purchase.provider.id;
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.deposit);
+        const response = await save(url + this.prefix_save, data);
 
-            } else {
+        if (response.status === 200) {
 
-              Swal.fire("Alerta", response.data.message, "warning");
+          if(response.data.flag){
 
-            }
+            await this.getDepositsHistory();
 
-          }
+            this.$emit("set-amount", parseFloat(this.deposit.amount).toFixed(4));
+            this.cleanData();
+            this.$emit("close-modal-deposits-purchase");
+            this.$emit("get-purchases-by-provider");
 
-        } catch (errors) {
+            Swal.fire("Alerta", response.data.message, "success");
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
           } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+
+            Swal.fire("Alerta", response.data.message, "warning");
+
           }
-
-        } finally {
-
-          this.loadingButtonsActions = true;
-          this.loading = false;
 
         }
 
-      },
-      cleanData(){
-        this.deposit.amount = 0;
-        this.deposit.purchase_id = 0;
-      },
-      async deleteDeposit(id){
+      } catch (errors) {
 
-        let el = this;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: "Desea eliminar el pago, se realizará el desembolso a la compra",
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      } finally {
+
+        this.loadingButtonsActions = true;
+        this.loading = false;
+
+      }
+
+    },
+    cleanData(){
+      this.deposit.amount = 0;
+      this.deposit.purchase_id = 0;
+    },
+    async deleteDeposit(id){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: "Desea eliminar el pago, se realizará el desembolso a la compra",
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -328,81 +328,81 @@
 
         });
 
-      },
-      getSetData(data){
+    },
+    getSetData(data){
 
-        let formData = new FormData();
-        let idUser = sessionStorage.getItem('id');
+      let formData = new FormData();
+      let idUser = sessionStorage.getItem("id");
 
-        if(idUser == undefined || idUser == null || idUser == ""){
-            if (this.$route.name !== 'Login') {
-                Swal.fire("Alerta", "Sesión Expirada", "warning");
-                this.$router.push({ name: 'Login' });
-            }
+      if(idUser == undefined || idUser == null || idUser == ""){
+        if (this.$route.name !== "Login") {
+          Swal.fire("Alerta", "Sesión Expirada", "warning");
+          this.$router.push({ name: "Login" });
         }
+      }
 
-        formData.append('user_id', idUser);
-        formData.append('purchase_id', data.purchase_id);
-        formData.append('provider_id', data.provider_id);
-        formData.append('amount', data.amount);
+      formData.append("user_id", idUser);
+      formData.append("purchase_id", data.purchase_id);
+      formData.append("provider_id", data.provider_id);
+      formData.append("amount", data.amount);
 
-        return formData;
+      return formData;
 
-      },
-      preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
+    },
+    preventInvalidDecimal(event) {
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
 
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
 
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
 
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Limitar la parte decimal a 4 dígitos
-        if (decimalPart && decimalPart.length >= 4 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
-      closeModal(){
-        this.$emit("close-modal-deposits-purchase");
+      // Limitar la parte decimal a 4 dígitos
+      if (decimalPart && decimalPart.length >= 4 && value.includes(".")) {
+        event.preventDefault();
       }
     },
-  };
+    closeModal(){
+      this.$emit("close-modal-deposits-purchase");
+    }
+  },
+};
 
 </script>

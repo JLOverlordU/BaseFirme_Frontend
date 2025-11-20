@@ -14,10 +14,10 @@
 
 <script>
 
-import CTableWrapper from './TableShifts.vue'
+import CTableWrapper from "./TableShifts.vue";
 
 export default {
-  name: 'Shifts',
+  name: "Shifts",
   components: { CTableWrapper },
-}
+};
 </script>

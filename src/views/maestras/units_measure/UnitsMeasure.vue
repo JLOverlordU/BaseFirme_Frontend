@@ -14,10 +14,10 @@
 
 <script>
 
-import CTableWrapper from './TableUnitsMeasure.vue'
+import CTableWrapper from "./TableUnitsMeasure.vue";
 
 export default {
-  name: 'UnitsMeasure',
+  name: "UnitsMeasure",
   components: { CTableWrapper },
-}
+};
 </script>

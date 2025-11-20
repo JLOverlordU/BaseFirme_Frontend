@@ -33,27 +33,27 @@
 </template>
 
 <script>
-import usersData from './UsersData'
+import usersData from "./UsersData";
 export default {
-  name: 'Users',
+  name: "Users",
   data () {
     return {
       items: usersData,
       fields: [
-        { key: 'username', label: 'Name', _classes: 'font-weight-bold' },
-        { key: 'registered' },
-        { key: 'role' },
-        { key: 'status' }
+        { key: "username", label: "Name", _classes: "font-weight-bold" },
+        { key: "registered" },
+        { key: "role" },
+        { key: "status" }
       ],
       activePage: 1
-    }
+    };
   },
   watch: {
     $route: {
       immediate: true,
       handler (route) {
         if (route.query && route.query.page) {
-          this.activePage = Number(route.query.page)
+          this.activePage = Number(route.query.page);
         }
       }
     }
@@ -61,19 +61,19 @@ export default {
   methods: {
     getBadge (status) {
       switch (status) {
-        case 'Active': return 'success'
-        case 'Inactive': return 'secondary'
-        case 'Pending': return 'warning'
-        case 'Banned': return 'danger'
-        default: 'primary'
+      case "Active": return "success";
+      case "Inactive": return "secondary";
+      case "Pending": return "warning";
+      case "Banned": return "danger";
+      default: "primary";
       }
     },
     rowClicked (item, index) {
-      this.$router.push({path: `users/${index + 1}`})
+      this.$router.push({path: `users/${index + 1}`});
     },
     pageChange (val) {
-      this.$router.push({ query: { page: val }})
+      this.$router.push({ query: { page: val }});
     }
   }
-}
+};
 </script>

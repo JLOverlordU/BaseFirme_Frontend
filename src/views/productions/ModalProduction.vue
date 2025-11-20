@@ -229,14 +229,14 @@
 
 <script>
 
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 import CTableProducts from "../modals/ModalProducts.vue";
-import Multiselect from 'vue-multiselect'
-import {list, save, show} from '../../assets/js/methods/functions.js'
+import Multiselect from "vue-multiselect";
+import {list, save, show} from "../../assets/js/methods/functions.js";
 
-import 'vue-select/dist/vue-select.css'
-import 'vue-multiselect/dist/vue-multiselect.min.css'
+import "vue-select/dist/vue-select.css";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
 export default {
   name: "ModalProduction",
@@ -264,10 +264,10 @@ export default {
       machines: [],
       formulas: [],
       fieldsFormulas:[
-        { key: 'index', label: '#' },
+        { key: "index", label: "#" },
         // { key: 'code', label: 'Código' },
-        { key: 'product', label: 'Producto' },
-        { key: 'amount', label: 'Cantidad' },
+        { key: "product", label: "Producto" },
+        { key: "amount", label: "Cantidad" },
       ],
       production: {
         id: "",
@@ -298,7 +298,7 @@ export default {
     };
   },
   watch: {
-    'production.packing'(newPacking) {
+    "production.packing"(newPacking) {
       if (newPacking > 0) {
 
         // this.production.amount = Math.floor(this.production.total / parseFloat(newPacking));
@@ -309,29 +309,29 @@ export default {
       }
     },
     async isVisibleProduction(newValue) {
-        if (newValue) {
+      if (newValue) {
 
-          this.loadingModal = true;
+        this.loadingModal = true;
 
-          if(this.id == 0) {
+        if(this.id == 0) {
             
-            await this.newProduction();
-            await this.getShifts();
-            await this.getMachines();
-            await this.getFormulas();
+          await this.newProduction();
+          await this.getShifts();
+          await this.getMachines();
+          await this.getFormulas();
           
-          } else {
+        } else {
 
-            await this.getShifts();
-            await this.getMachines();
-            await this.getFormulas();
-            await this.editProduction(this.id);
-
-          }
-
-          this.loadingModal = false;
+          await this.getShifts();
+          await this.getMachines();
+          await this.getFormulas();
+          await this.editProduction(this.id);
 
         }
+
+        this.loadingModal = false;
+
+      }
     },
   },
   methods: {
@@ -567,77 +567,77 @@ export default {
     getSetData(data){
 
       let formData = new FormData();
-      let idUser = sessionStorage.getItem('id');
+      let idUser = sessionStorage.getItem("id");
 
       if(idUser == undefined || idUser == null || idUser == ""){
-          if (this.$route.name !== 'Login') {
-              Swal.fire("Alerta", "Sesión Expirada", "warning");
-              this.$router.push({ name: 'Login' });
-          }
+        if (this.$route.name !== "Login") {
+          Swal.fire("Alerta", "Sesión Expirada", "warning");
+          this.$router.push({ name: "Login" });
+        }
       }
 
-      formData.append('user_id', idUser);
-      formData.append('tons_produced', data.tons_produced);
-      formData.append('shift_id', data.shift);
-      formData.append('machine_id', data.machine);
-      formData.append('formula_id', data.formula.id);
-      formData.append('packing', data.packing);
-      formData.append('amount', data.amount);
-      formData.append('observations', data.observations);
+      formData.append("user_id", idUser);
+      formData.append("tons_produced", data.tons_produced);
+      formData.append("shift_id", data.shift);
+      formData.append("machine_id", data.machine);
+      formData.append("formula_id", data.formula.id);
+      formData.append("packing", data.packing);
+      formData.append("amount", data.amount);
+      formData.append("observations", data.observations);
 
       return formData;
 
     },
     preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
 
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
 
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
 
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Limitar la parte decimal a 2 dígitos
-        if (decimalPart && decimalPart.length >= 2 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
+      // Limitar la parte decimal a 2 dígitos
+      if (decimalPart && decimalPart.length >= 2 && value.includes(".")) {
+        event.preventDefault();
+      }
+    },
   },
 };
 </script>

@@ -126,207 +126,207 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {list, save} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {list, save} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableRolesPerfiles',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'name', label: 'Nombre' },
-            { key: 'description', label: 'Descripción' },
-            { key: 'buttonChange', label: 'Acción', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      caption: {
-        type: String,
-        default: 'Table'
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    async mounted() {
-      await this.getRoles();
-      await this.getFunctions();
-    },
-    data () {
-      return {
-        prefix: "functions",
-        prefix_rol: "rol",
-        prefix_list_roles: "roles",
-        role_id: 1,
-        roles: [],
-        functions: [],
-        loading: true,
-        role: {
-          id: "",
-          name: "",
-        },
-        // Modal
-        titleModal: "Nuevo Perfil",
-        textButton: "Guardar",
-        flagModal: false,
-        loadingModal: false,
-        loadingRoles: false,
+export default {
+  name: "TableRolesPerfiles",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "name", label: "Nombre" },
+          { key: "description", label: "Descripción" },
+          { key: "buttonChange", label: "Acción", _style:"min-width:20%;" },
+        ];
       }
     },
-    methods: {
-      async saveRole(){
+    caption: {
+      type: String,
+      default: "Table"
+    },
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  async mounted() {
+    await this.getRoles();
+    await this.getFunctions();
+  },
+  data () {
+    return {
+      prefix: "functions",
+      prefix_rol: "rol",
+      prefix_list_roles: "roles",
+      role_id: 1,
+      roles: [],
+      functions: [],
+      loading: true,
+      role: {
+        id: "",
+        name: "",
+      },
+      // Modal
+      titleModal: "Nuevo Perfil",
+      textButton: "Guardar",
+      flagModal: false,
+      loadingModal: false,
+      loadingRoles: false,
+    };
+  },
+  methods: {
+    async saveRole(){
         
-        this.loadingModal = true;
+      this.loadingModal = true;
         
-        try {
+      try {
         
-          const url = this.$store.state.url;
-          const response = await save(url + this.prefix_rol, this.role);
+        const url = this.$store.state.url;
+        const response = await save(url + this.prefix_rol, this.role);
                     
-          if (response.status === 200) {
+        if (response.status === 200) {
             
-            this.getRoles();
+          this.getRoles();
             
-            Swal.fire("Alerta", response.data.message, "success");
-            this.flagModal = false;
+          Swal.fire("Alerta", response.data.message, "success");
+          this.flagModal = false;
 
-          }
+        }
 
-        } catch (errors) {
+      } catch (errors) {
           
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        } finally {
+      } finally {
  
-          this.loadingModal = false;
+        this.loadingModal = false;
         
+      }
+
+    },
+    async changePermission(item){
+
+      this.loading = true;
+
+      try {
+          
+        let filters = {
+          permission_id : item.id,
+          role_id       : this.role_id,
+        };
+
+        const url = this.$store.state.url;
+        const response = await list(url + "change_function", filters);
+
+        if (response.status === 200) {
+          this.getFunctions();
+          Swal.fire("Alerta", response.data.message, "warning");
         }
 
-      },
-      async changePermission(item){
+      } catch (errors) {
 
-        this.loading = true;
-
-        try {
-          
-          let filters = {
-            permission_id : item.id,
-            role_id       : this.role_id,
-          };
-
-          const url = this.$store.state.url;
-          const response = await list(url + "change_function", filters);
-
-          if (response.status === 200) {
-            this.getFunctions();
-            Swal.fire("Alerta", response.data.message, "warning");
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async getFunctions(){
-        
-        this.loading = true;
-
-        try {
+      } finally {
           
-          let filters = {
-            role_id: this.role_id,
-          };
-
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix, filters);
-
-          if (response.status === 200) {
-            this.functions = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
+        this.loading = false;
         
+      }
+
+    },
+    async getFunctions(){
+        
+      this.loading = true;
+
+      try {
+          
+        let filters = {
+          role_id: this.role_id,
+        };
+
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix, filters);
+
+        if (response.status === 200) {
+          this.functions = response.data.data;
         }
 
-      },
-      async getRoles(){
-        
-        this.loadingRoles = true;
-        
-        try {
+      } catch (errors) {
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list_roles);
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-          if (response.status === 200) {
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    async getRoles(){
+        
+      this.loadingRoles = true;
+        
+      try {
+
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list_roles);
+
+        if (response.status === 200) {
             
-            let setRoles = (response.data.data).map(role => ({
-              value: role.id, 
-              label: role.name
-            }));
+          let setRoles = (response.data.data).map(role => ({
+            value: role.id, 
+            label: role.name
+          }));
             
-            this.roles = setRoles;
+          this.roles = setRoles;
 
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loadingRoles = false;
-        
         }
 
-      },
-      openModal(){
-        this.cleanModal();
-        this.flagModal = true;
-      },
-      cleanModal(){
-        this.role.id   = "";
-        this.role.name = "";
-        this.titleModal = "Nuevo Perfil";
-        this.textButton = "Guardar";
-      },
-    }
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+          
+        this.loadingRoles = false;
+        
+      }
+
+    },
+    openModal(){
+      this.cleanModal();
+      this.flagModal = true;
+    },
+    cleanModal(){
+      this.role.id   = "";
+      this.role.name = "";
+      this.titleModal = "Nuevo Perfil";
+      this.textButton = "Guardar";
+    },
   }
+};
 
 </script>
 

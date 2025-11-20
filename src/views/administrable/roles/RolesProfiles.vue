@@ -14,10 +14,10 @@
 
 <script>
 
-import CTableWrapper from './TableRolesPerfiles.vue'
+import CTableWrapper from "./TableRolesPerfiles.vue";
 
 export default {
-  name: 'RolesProfiles',
+  name: "RolesProfiles",
   components: { CTableWrapper },
-}
+};
 </script>

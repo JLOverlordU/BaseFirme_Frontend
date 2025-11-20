@@ -155,130 +155,130 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import ModalProduction from './ModalProduction.vue';
-  import {list, report, destroy} from '../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import ModalProduction from "./ModalProduction.vue";
+import {list, report, destroy} from "../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableProductions',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'consecutive', label: 'N. de Producción' },
-            { key: 'anno', label: 'Año' },
-            { key: 'date', label: 'Fecha' },
-            { key: 'month', label: 'Mes' },
-            { key: 'tons_produced', label: 'TN' },
-            { key: 'shift', label: 'Turno' },
-            { key: 'machine', label: 'Máquina' },
-            { key: 'formula', label: 'Fórmula' },
-            { key: 'observations', label: 'Observaciones' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      caption: {
-        type: String,
-        default: 'TableProductions'
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean,
-    },
-    mounted() {
-      this.getProductions();
-    },
-    data () {
-      return {
-        prefix_list: "productions",
-        prefix: "production",
-        idProduction: 0,
-        productions: [],
-        products: [],
-        loading: true,
-        production: {
-          id: "",
-          product: {
-            "name"          : "",
-            "code"          : "",
-            "presentation"  : "",
-            "process"       : "",
-          },
-          tons_produced: 0,
-          shift: "",
-          machine: "",
-          observation: "",
-        },
-        filters: {
-          date        : "",
-          start_date  : "",
-          end_date    : "",
-          formula     : "",
-          type        : "production",
-        },
-        selectedProduct: "",
-
-        // Modal
-        titleModal: "Nueva Producción",
-        textButton: "Guardar",
-        flagModal: false,
-        loadingModal: false,
-        loadingButtonEdit: true,
+export default {
+  name: "TableProductions",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "N. de Producción" },
+          { key: "anno", label: "Año" },
+          { key: "date", label: "Fecha" },
+          { key: "month", label: "Mes" },
+          { key: "tons_produced", label: "TN" },
+          { key: "shift", label: "Turno" },
+          { key: "machine", label: "Máquina" },
+          { key: "formula", label: "Fórmula" },
+          { key: "observations", label: "Observaciones" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    components: {
-      ModalProduction
+    caption: {
+      type: String,
+      default: "TableProductions"
     },
-    methods: {
-      async getProductions(){
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean,
+  },
+  mounted() {
+    this.getProductions();
+  },
+  data () {
+    return {
+      prefix_list: "productions",
+      prefix: "production",
+      idProduction: 0,
+      productions: [],
+      products: [],
+      loading: true,
+      production: {
+        id: "",
+        product: {
+          "name"          : "",
+          "code"          : "",
+          "presentation"  : "",
+          "process"       : "",
+        },
+        tons_produced: 0,
+        shift: "",
+        machine: "",
+        observation: "",
+      },
+      filters: {
+        date        : "",
+        start_date  : "",
+        end_date    : "",
+        formula     : "",
+        type        : "production",
+      },
+      selectedProduct: "",
 
-        this.loading = true;
+      // Modal
+      titleModal: "Nueva Producción",
+      textButton: "Guardar",
+      flagModal: false,
+      loadingModal: false,
+      loadingButtonEdit: true,
+    };
+  },
+  components: {
+    ModalProduction
+  },
+  methods: {
+    async getProductions(){
 
-        try {
+      this.loading = true;
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
+      try {
 
-          if (response.status === 200) {            
-            this.productions = response.data.data;
-          }
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
+        if (response.status === 200) {            
+          this.productions = response.data.data;
         }
 
-      },
-      async deleteProduction(id){
+      } catch (errors) {
 
-        let el = this;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará la producción.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    async deleteProduction(id){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: "Se eliminará la producción.",
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -309,78 +309,78 @@
 
         });
 
-      },
-      async downloadExcelProductions(prefix, name){
+    },
+    async downloadExcelProductions(prefix, name){
 
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          await report(url+prefix, this.filters, "reporte "+ name +".xlsx");
+        const url = this.$store.state.url;
+        await report(url+prefix, this.filters, "reporte "+ name +".xlsx");
 
-        } catch (errors) {
+      } catch (errors) {
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;
-
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async openModal(){
-        this.idProduction = 0;
-        this.flagModal    = true;
-      },
-      closeModalProduction(){        
-        this.flagModal = false;
-      },
-      async editModal(id){
-        this.idProduction = id;
-        this.flagModal    = true;
-      },
-      cleanFilters() {
-        this.filters = {
-          date        : "",
-          start_date  : "",
-          end_date    : "",
-          formula     : "",
-        };
-      },
-      getYear(dateString) {
-        return dateString.split('-')[0];
-      },
-      getDate(dateString) {
-        return dateString.split('-')[2]+"-"+this.getMonth(dateString);
-      },
-      getMonth(dateString) {
-        
-        const monthNumber = dateString.split('-')[1];
-        
-        const months = [
-          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-        ];
-        
-        return months[parseInt(monthNumber, 10) - 1];
+      } finally {
 
-      },
-      validateDates() {
-        if (this.filters.start_date && this.filters.end_date) {
-          if (this.filters.end_date < this.filters.start_date) {
-            Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
-            this.filters.end_date = '';
-          }
+        this.loading = false;
+
+      }
+
+    },
+    async openModal(){
+      this.idProduction = 0;
+      this.flagModal    = true;
+    },
+    closeModalProduction(){        
+      this.flagModal = false;
+    },
+    async editModal(id){
+      this.idProduction = id;
+      this.flagModal    = true;
+    },
+    cleanFilters() {
+      this.filters = {
+        date        : "",
+        start_date  : "",
+        end_date    : "",
+        formula     : "",
+      };
+    },
+    getYear(dateString) {
+      return dateString.split("-")[0];
+    },
+    getDate(dateString) {
+      return dateString.split("-")[2]+"-"+this.getMonth(dateString);
+    },
+    getMonth(dateString) {
+        
+      const monthNumber = dateString.split("-")[1];
+        
+      const months = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+      ];
+        
+      return months[parseInt(monthNumber, 10) - 1];
+
+    },
+    validateDates() {
+      if (this.filters.start_date && this.filters.end_date) {
+        if (this.filters.end_date < this.filters.start_date) {
+          Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
+          this.filters.end_date = "";
         }
       }
     }
   }
+};
 
 </script>
 

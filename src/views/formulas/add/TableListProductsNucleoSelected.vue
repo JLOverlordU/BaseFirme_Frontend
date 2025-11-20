@@ -76,60 +76,60 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableListProductsNucleoSelected',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'product', label: 'Insumo' },
-            { key: 'price', label: 'Precio' },
-            { key: 'cost', label: 'Costo' },
-            { key: 'amount', label: 'Cantidad' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    data () {
-      return {
-        prefix: "formula_details",
-        loadingButtonEdit: false,
-        loadingProducts: true,
-        filters: [],
+export default {
+  name: "TableListProductsNucleoSelected",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "product", label: "Insumo" },
+          { key: "price", label: "Precio" },
+          { key: "cost", label: "Costo" },
+          { key: "amount", label: "Cantidad" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    methods: {
-      deleteDetail(index, id, name) {
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  data () {
+    return {
+      prefix: "formula_details",
+      loadingButtonEdit: false,
+      loadingProducts: true,
+      filters: [],
+    };
+  },
+  methods: {
+    deleteDetail(index, id, name) {
 
-        let el = this;
+      let el = this;
 
-        if(id == null || id == "" ||id == undefined){
-          id = null;
-        }
+      if(id == null || id == "" ||id == undefined){
+        id = null;
+      }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará el detalle '${name}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará el detalle '${name}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -144,7 +144,7 @@
                 if (response.status === 200) {
   
                   el.items.splice(index, 1);
-                  el.$emit('get-total-general', index);
+                  el.$emit("get-total-general", index);
                   Swal.fire("Alerta", response.data.message, "success");
   
                 }
@@ -170,13 +170,13 @@
 
         });
 
-      },
-      editModal(index, item) {
-        item.index = index;
-        this.$emit("get-edit-detail", item);
-      },
-    }
+    },
+    editModal(index, item) {
+      item.index = index;
+      this.$emit("get-edit-detail", item);
+    },
   }
+};
 
 </script>
 

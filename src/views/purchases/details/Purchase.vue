@@ -89,91 +89,91 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {report, ticket} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {report, ticket} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'Purchase',
-    data() {
-      return {
-        loading: false,
-        data: {},
-        purchase: {
-          id: "",
-          consecutive: "",
-          date: "",
-          client: "",
-          description: "",
-          subtotal: 0,
-          deposit: 0,
-          consumption: 0,
-          type: "",
-          boleta_factura: "",
-          ruc: "",
-          total: 0,
-          details: []
-        },
-      };
+export default {
+  name: "Purchase",
+  data() {
+    return {
+      loading: false,
+      data: {},
+      purchase: {
+        id: "",
+        consecutive: "",
+        date: "",
+        client: "",
+        description: "",
+        subtotal: 0,
+        deposit: 0,
+        consumption: 0,
+        type: "",
+        boleta_factura: "",
+        ruc: "",
+        total: 0,
+        details: []
+      },
+    };
+  },
+  async mounted() {
+    await this.getPurchase();
+  },
+  methods: {
+    async getPurchase(){
+
+      const data = this.$route.query.data;
+
+      if (data && typeof data === "string" && data.trim() !== "") {
+
+        const item = JSON.parse(data);
+
+        this.purchase.id          = item.id;
+        this.purchase.consecutive = item.consecutive;
+        this.purchase.date        = item.date;
+        this.purchase.provider    = item.provider;
+        this.purchase.description = item.description;
+        this.purchase.subtotal    = item.subtotal;
+        this.purchase.deposit     = item.deposit;
+        this.purchase.consumption = item.consumption;
+        this.purchase.type        = item.type;
+        this.purchase.boleta_factura  = item.boleta_factura;
+        this.purchase.ruc         = item.ruc;
+        this.purchase.total       = item.total;
+        this.purchase.details     = item.details;
+
+      }
+
     },
-    async mounted() {
-      await this.getPurchase();
-    },
-    methods: {
-      async getPurchase(){
+    async downloadReport(method, type, extention) {
 
-        const data = this.$route.query.data;
+      this.loading = true;
 
-        if (data && typeof data === 'string' && data.trim() !== '') {
+      try {
 
-          const item = JSON.parse(data);
+        const url = this.$store.state.url;
 
-          this.purchase.id          = item.id;
-          this.purchase.consecutive = item.consecutive;
-          this.purchase.date        = item.date;
-          this.purchase.provider    = item.provider;
-          this.purchase.description = item.description;
-          this.purchase.subtotal    = item.subtotal;
-          this.purchase.deposit     = item.deposit;
-          this.purchase.consumption = item.consumption;
-          this.purchase.type        = item.type;
-          this.purchase.boleta_factura  = item.boleta_factura;
-          this.purchase.ruc         = item.ruc;
-          this.purchase.total       = item.total;
-          this.purchase.details     = item.details;
-
+        if(type == "excel"){
+          await report(url+method, this.purchase, "reporte N°"+this.purchase.consecutive+extention);
+        } else {
+          await ticket(url+method, this.purchase, "reporte N°"+this.purchase.consecutive+extention);
         }
 
-      },
-      async downloadReport(method, type, extention) {
+      } catch (errors) {
 
-        this.loading = true;
-
-        try {
-
-          const url = this.$store.state.url;
-
-          if(type == "excel"){
-            await report(url+method, this.purchase, "reporte N°"+this.purchase.consecutive+extention);
-          } else {
-            await ticket(url+method, this.purchase, "reporte N°"+this.purchase.consecutive+extention);
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;        
-
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-    }
+      } finally {
+
+        this.loading = false;        
+
+      }
+
+    },
   }
+};
 
 </script>

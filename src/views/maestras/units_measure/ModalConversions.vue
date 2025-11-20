@@ -112,201 +112,201 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {save, destroy, list} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {save, destroy, list} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'ModalConversions',
-    props: {
-      isVisible: {
-        type: Boolean,
-        required: true,
-      },
-      unitMeasure: {
-        type: Object,
-        required: false,
-        default: null
-      },
-      fields: {
-        type: Array,
-        default() {
-          return [
-              { key: "index", label: "#" },
-              { key: "text1", label: "Unidad" },
-              { key: "amount", label: "Factor de conversión" },
-              { key: "text2", label: "Unidad 2" },
-              { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ];
-        },
-      },
+export default {
+  name: "ModalConversions",
+  props: {
+    isVisible: {
+      type: Boolean,
+      required: true,
     },
-    data() {
-      return {
-        prefix: "convertion",
-        prefix_list: "convertions",
-        prefix_units_measure: "units_measure",
-        sale: null,
-        units_measure: [],
-        convertions: [],
-        filters: {
-          unitMeasure: 0,
-          unitMeasureConvert: 0,
-          amount: 0,
-        },
-        loading: false,
-        loadingUnitMeasure: false,
-        flagModalDepositsSale: false,
-      };
+    unitMeasure: {
+      type: Object,
+      required: false,
+      default: null
     },
-    async mounted() {
-      await this.getConvertionsByUnit();
-    },
-    watch: {
-      async isVisible(newValue) {
-        if (newValue) {
-          await this.getUnitsMeasure();
-          await this.getConvertionsByUnit();
-        }
+    fields: {
+      type: Array,
+      default() {
+        return [
+          { key: "index", label: "#" },
+          { key: "text1", label: "Unidad" },
+          { key: "amount", label: "Factor de conversión" },
+          { key: "text2", label: "Unidad 2" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       },
     },
-    methods: {
-      async getUnitsMeasure(){
+  },
+  data() {
+    return {
+      prefix: "convertion",
+      prefix_list: "convertions",
+      prefix_units_measure: "units_measure",
+      sale: null,
+      units_measure: [],
+      convertions: [],
+      filters: {
+        unitMeasure: 0,
+        unitMeasureConvert: 0,
+        amount: 0,
+      },
+      loading: false,
+      loadingUnitMeasure: false,
+      flagModalDepositsSale: false,
+    };
+  },
+  async mounted() {
+    await this.getConvertionsByUnit();
+  },
+  watch: {
+    async isVisible(newValue) {
+      if (newValue) {
+        await this.getUnitsMeasure();
+        await this.getConvertionsByUnit();
+      }
+    },
+  },
+  methods: {
+    async getUnitsMeasure(){
 
-        this.loading = true;
-        this.loadingUnitMeasure = true;
+      this.loading = true;
+      this.loadingUnitMeasure = true;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_units_measure);
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_units_measure);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
 
-            let setUnitsMeasure = (response.data.data).map(role => ({
-              value: role.id, 
-              label: role.name
-            }));
+          let setUnitsMeasure = (response.data.data).map(role => ({
+            value: role.id, 
+            label: role.name
+          }));
 
-            this.units_measure = setUnitsMeasure;
-
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loadingUnitMeasure = false;
+          this.units_measure = setUnitsMeasure;
 
         }
 
-      },
-      async getConvertionsByUnit(){
+      } catch (errors) {
 
-        this.loading = true;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        try {
+      } finally {
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list);
+        this.loadingUnitMeasure = false;
+
+      }
+
+    },
+    async getConvertionsByUnit(){
+
+      this.loading = true;
+
+      try {
+
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list);
           
-          if (response.status === 200) {
-            this.convertions = response.data.data;
-          }
-
-        } catch (errors) {
-
-          this.convertions = [];
-
-        } finally {
-
-          this.loading = false;
-
+        if (response.status === 200) {
+          this.convertions = response.data.data;
         }
 
-      },
-      async saveConvertion(){
+      } catch (errors) {
 
-        this.loading = true;
+        this.convertions = [];
 
-        try {
+      } finally {
 
-          if(this.filters.amount == 0){
-            Swal.fire("Alerta", "El factor de conversión no puede ser 0", "warning");
-            this.loading = false;
-            return
-          }
+        this.loading = false;
 
-          if(this.filters.unitMeasure == 0){
-            Swal.fire("Alerta", "La Unidad de Medida es obligatoria", "warning");
-            this.loading = false;
-            return
-          }
+      }
 
-          if(this.filters.unitMeasureConvert == 0){
-            Swal.fire("Alerta", "La Unidad de Medida 2 es obligatoria", "warning");
-            this.loading = false;
-            return
-          }
+    },
+    async saveConvertion(){
 
-          if(this.filters.unitMeasure == this.filters.unitMeasureConvert){
-            Swal.fire("Alerta", "Las unidades de medida no pueden ser iguales", "warning");
-            this.loading = false;
-            return
-          }
+      this.loading = true;
 
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.filters);
-          const response = await save(url + this.prefix, data);
+      try {
 
-          if (response.status === 200) {
+        if(this.filters.amount == 0){
+          Swal.fire("Alerta", "El factor de conversión no puede ser 0", "warning");
+          this.loading = false;
+          return;
+        }
 
-            this.filters.amount = 0;
-            this.getConvertionsByUnit();
+        if(this.filters.unitMeasure == 0){
+          Swal.fire("Alerta", "La Unidad de Medida es obligatoria", "warning");
+          this.loading = false;
+          return;
+        }
 
-            Swal.fire("Alerta", response.data.message, "success");
-            this.flagModal = false;
+        if(this.filters.unitMeasureConvert == 0){
+          Swal.fire("Alerta", "La Unidad de Medida 2 es obligatoria", "warning");
+          this.loading = false;
+          return;
+        }
+
+        if(this.filters.unitMeasure == this.filters.unitMeasureConvert){
+          Swal.fire("Alerta", "Las unidades de medida no pueden ser iguales", "warning");
+          this.loading = false;
+          return;
+        }
+
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.filters);
+        const response = await save(url + this.prefix, data);
+
+        if (response.status === 200) {
+
+          this.filters.amount = 0;
+          this.getConvertionsByUnit();
+
+          Swal.fire("Alerta", response.data.message, "success");
+          this.flagModal = false;
             
-          } else {
+        } else {
 
-            Swal.fire("Alerta", response.data.message, "warning");
-            this.flagModal = false;
-
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;
+          Swal.fire("Alerta", response.data.message, "warning");
+          this.flagModal = false;
 
         }
 
-      },
-      async deleteConvertion(id){
+      } catch (errors) {
 
-        let el = this;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: "Se eliminará la conversión",
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      } finally {
+
+        this.loading = false;
+
+      }
+
+    },
+    async deleteConvertion(id){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: "Se eliminará la conversión",
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -337,79 +337,79 @@
 
         });
 
-      },
-      getSetData(data){
-
-        let formData = new FormData();
-
-        formData.append('id_unit_measure', data.unitMeasure);
-        formData.append('amount', data.amount);
-        formData.append('id_unit_measure_convert', data.unitMeasureConvert);
-
-        return formData;
-
-      },
-      closeModal(){
-        this.$emit("close-modal-conversions");
-      },
-      openModalDepositsSale(item) {      
-        this.sale = item;
-        this.flagModalDepositsSale = true;
-      },
-      closeModalDepositsSale() {
-        this.flagModalDepositsSale = false;
-      },
-      preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
-
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
-
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
-
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
-
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
-
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
-
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
-
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
-
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
-
-        // Limitar la parte decimal a 2 dígitos
-        if (decimalPart && decimalPart.length >= 2 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
     },
-  };
+    getSetData(data){
+
+      let formData = new FormData();
+
+      formData.append("id_unit_measure", data.unitMeasure);
+      formData.append("amount", data.amount);
+      formData.append("id_unit_measure_convert", data.unitMeasureConvert);
+
+      return formData;
+
+    },
+    closeModal(){
+      this.$emit("close-modal-conversions");
+    },
+    openModalDepositsSale(item) {      
+      this.sale = item;
+      this.flagModalDepositsSale = true;
+    },
+    closeModalDepositsSale() {
+      this.flagModalDepositsSale = false;
+    },
+    preventInvalidDecimal(event) {
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
+
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
+
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
+
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
+
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
+
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
+
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
+
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
+
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
+
+      // Limitar la parte decimal a 2 dígitos
+      if (decimalPart && decimalPart.length >= 2 && value.includes(".")) {
+        event.preventDefault();
+      }
+    },
+  },
+};
 
 </script>

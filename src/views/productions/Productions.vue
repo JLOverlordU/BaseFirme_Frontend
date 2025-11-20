@@ -14,10 +14,10 @@
 
 <script>
 
-import CTableWrapper from './TableProductions.vue'
+import CTableWrapper from "./TableProductions.vue";
 
 export default {
-  name: 'Productions',
+  name: "Productions",
   components: { CTableWrapper },
-}
+};
 </script>

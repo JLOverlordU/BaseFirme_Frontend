@@ -147,143 +147,143 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {list, report} from '../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {list, report} from "../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableDetails',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'consecutive', label: 'Número de Venta/Compra' },
-            { key: 'typeItemCast', label: 'Tipo' },
-            { key: 'date', label: 'Día de creación' },
-            { key: 'client', label: 'Cliente/Proveedor' },
-            { key: 'user_creator', label: 'Usuario Creador' },
-            { key: 'product', label: 'Producto' },
-            // { key: 'type', label: 'Tipo' },
-            { key: 'amount', label: 'Cantidad' },
-            { key: 'price', label: 'Precio' },
-            { key: 'total', label: 'Total' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    mounted() {
-      this.getDetailsSales();
-    },
-    data () {
-      return {
-        prefix_list: "sales_details",
-        prefix: "sale",
-        sales: [],
-        loading: true,
-        types: ['ambas', 'contado', 'credito'],
-        typesProducts: ['ambas', 'insumo', 'nutrivan'],
-        filters: {
-          consecutive : "",
-          date        : "",
-          start_date  : "",
-          end_date    : "",
-          client      : "",
-          user        : "",
-          product     : "",
-          typeProduct : "ambas",
-          type        : "ambas",
-        },
+export default {
+  name: "TableDetails",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "Número de Venta/Compra" },
+          { key: "typeItemCast", label: "Tipo" },
+          { key: "date", label: "Día de creación" },
+          { key: "client", label: "Cliente/Proveedor" },
+          { key: "user_creator", label: "Usuario Creador" },
+          { key: "product", label: "Producto" },
+          // { key: 'type', label: 'Tipo' },
+          { key: "amount", label: "Cantidad" },
+          { key: "price", label: "Precio" },
+          { key: "total", label: "Total" },
+        ];
       }
     },
-    methods: {
-      async getDetailsSales(){
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  mounted() {
+    this.getDetailsSales();
+  },
+  data () {
+    return {
+      prefix_list: "sales_details",
+      prefix: "sale",
+      sales: [],
+      loading: true,
+      types: ["ambas", "contado", "credito"],
+      typesProducts: ["ambas", "insumo", "nutrivan"],
+      filters: {
+        consecutive : "",
+        date        : "",
+        start_date  : "",
+        end_date    : "",
+        client      : "",
+        user        : "",
+        product     : "",
+        typeProduct : "ambas",
+        type        : "ambas",
+      },
+    };
+  },
+  methods: {
+    async getDetailsSales(){
 
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-          if (response.status === 200) { 
-            this.sales = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;
-
+        if (response.status === 200) { 
+          this.sales = response.data.data;
         }
 
-      },
-      async downloadExcelSale(){
-        
-        this.loading = true;
+      } catch (errors) {
 
-        try {
-
-          const url = this.$store.state.url;
-          await report(url+"sales_details_excel", this.filters, "reporte caja.xlsx");
-
-        } catch (errors) {
-          
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      cleanFilters() {
-        this.filters = {
-          consecutive : "",
-          date        : "",
-          start_date  : "",
-          end_date    : "",
-          client      : "",
-          user        : "",
-          product     : "",
-          typeProduct : "ambas",
-          type        : "ambas",
-        };
-      },
-      sendViewSale(item) {
-        this.$router.push({ 
-          name: 'Detalle venta', 
-          query: { data: JSON.stringify(item) }
-        });
-      },
-      validateDates() {
-        if (this.filters.start_date && this.filters.end_date) {
-          if (this.filters.end_date < this.filters.start_date) {
-            Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
-            this.filters.end_date = '';
-          }
+      } finally {
+
+        this.loading = false;
+
+      }
+
+    },
+    async downloadExcelSale(){
+        
+      this.loading = true;
+
+      try {
+
+        const url = this.$store.state.url;
+        await report(url+"sales_details_excel", this.filters, "reporte caja.xlsx");
+
+      } catch (errors) {
+          
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    cleanFilters() {
+      this.filters = {
+        consecutive : "",
+        date        : "",
+        start_date  : "",
+        end_date    : "",
+        client      : "",
+        user        : "",
+        product     : "",
+        typeProduct : "ambas",
+        type        : "ambas",
+      };
+    },
+    sendViewSale(item) {
+      this.$router.push({ 
+        name: "Detalle venta", 
+        query: { data: JSON.stringify(item) }
+      });
+    },
+    validateDates() {
+      if (this.filters.start_date && this.filters.end_date) {
+        if (this.filters.end_date < this.filters.start_date) {
+          Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
+          this.filters.end_date = "";
         }
       }
     }
   }
+};
 
 </script>

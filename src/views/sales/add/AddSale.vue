@@ -184,183 +184,183 @@
 
 <script>
 
-  import CTableProductsSelected from '../add/TableListProductsSelected.vue'
-  import ModalDetail from './ModalDetail.vue';
-  import Multiselect from 'vue-multiselect'
-  import Swal from "sweetalert2"
-  import {list, save, ticket} from '../../../assets/js/methods/functions.js'
+import CTableProductsSelected from "../add/TableListProductsSelected.vue";
+import ModalDetail from "./ModalDetail.vue";
+import Multiselect from "vue-multiselect";
+import Swal from "sweetalert2";
+import {list, save, ticket} from "../../../assets/js/methods/functions.js";
 
-  import 'vue-select/dist/vue-select.css'
-  import 'vue-multiselect/dist/vue-multiselect.min.css'
+import "vue-select/dist/vue-select.css";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
-  export default {
-    name: 'AddSale',
-    data() {
-      return {
-        prefix: "sale",
-        prefix_clients: "clients",
-        clients: [],
-        title: "Nueva Venta",
-        btnSaveSale: "Guardar",
-        disabledGeneral: false,
-        types: ['contado', 'credito'],
-        types_sales: ['boleta', 'factura'],
-        sale: {
-          id: "",
-          consecutive: "",
-          date: this.getCurrentDate(),
-          client: "",
-          ruc: "",
-          description: "",
-          subtotal: 0,
-          deposit: 0,
-          consumption: 0,
-          total: 0,
-          type: "contado",
-          boleta_factura: "boleta",
-          details: []
-        },
-        flagModalDetail: false,
-        loadingClients: false,
-        loadingButtonsActions: true,
-      }
-    },
-    async mounted() {
-      await this.getClients();
-      await this.getSale();
-      this.getTotalGeneral();
-    },
-    components: {
-      ModalDetail,
-      Multiselect,
-      CTableProductsSelected
-    },
-    methods: {
-      async getClients(){
+export default {
+  name: "AddSale",
+  data() {
+    return {
+      prefix: "sale",
+      prefix_clients: "clients",
+      clients: [],
+      title: "Nueva Venta",
+      btnSaveSale: "Guardar",
+      disabledGeneral: false,
+      types: ["contado", "credito"],
+      types_sales: ["boleta", "factura"],
+      sale: {
+        id: "",
+        consecutive: "",
+        date: this.getCurrentDate(),
+        client: "",
+        ruc: "",
+        description: "",
+        subtotal: 0,
+        deposit: 0,
+        consumption: 0,
+        total: 0,
+        type: "contado",
+        boleta_factura: "boleta",
+        details: []
+      },
+      flagModalDetail: false,
+      loadingClients: false,
+      loadingButtonsActions: true,
+    };
+  },
+  async mounted() {
+    await this.getClients();
+    await this.getSale();
+    this.getTotalGeneral();
+  },
+  components: {
+    ModalDetail,
+    Multiselect,
+    CTableProductsSelected
+  },
+  methods: {
+    async getClients(){
         
-        this.loadingClients = true;
+      this.loadingClients = true;
 
-        try {
+      try {
         
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_clients);
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_clients);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
             
-            let setClients = (response.data.data).map(role => ({
-              id: role.id, 
-              name: role.name
-            }));
+          let setClients = (response.data.data).map(role => ({
+            id: role.id, 
+            name: role.name
+          }));
 
-            this.clients = setClients;
+          this.clients = setClients;
 
-          }
-        } catch (errors) {
+        }
+      } catch (errors) {
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        } finally {
+      } finally {
           
-          this.loadingClients = false;
+        this.loadingClients = false;
         
-        }
+      }
 
-      },
-      async saveSale(){
+    },
+    async saveSale(){
 
-        this.loadingButtonsActions = false;
+      this.loadingButtonsActions = false;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.sale);
-          const response = await save(url + this.prefix, data, this.sale.id);
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.sale);
+        const response = await save(url + this.prefix, data, this.sale.id);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
 
-            if(response.data.flag){
+          if(response.data.flag){
 
-              // Swal.fire("Alerta", response.data.message, "success");
+            // Swal.fire("Alerta", response.data.message, "success");
 
-              this.title = "Modificar Venta";
-              this.btnSaveSale = "Modificar";
-              this.sale.id = response?.data?.data?.id;
-              this.sale.consecutive = response?.data?.data?.consecutive;
+            this.title = "Modificar Venta";
+            this.btnSaveSale = "Modificar";
+            this.sale.id = response?.data?.data?.id;
+            this.sale.consecutive = response?.data?.data?.consecutive;
 
-              //? Imprime el ticket
-              await this.downloadReport('sale_pdf', '.pdf', response.data.message);
+            //? Imprime el ticket
+            await this.downloadReport("sale_pdf", ".pdf", response.data.message);
 
-              this.$router.push({ 
-                name: 'Listado ventas'
-              });
+            this.$router.push({ 
+              name: "Listado ventas"
+            });
 
-            } else {
-
-              Swal.fire("Alerta", response.data.message, "warning");
-
-            }
-
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
           } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+
+            Swal.fire("Alerta", response.data.message, "warning");
+
           }
 
-        } finally {
-
-          this.loadingButtonsActions = true;
-
         }
 
-      },
-      async getSale(){
+      } catch (errors) {
 
-        const data = this.$route.query.data;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loadingButtonsActions = true;
+
+      }
+
+    },
+    async getSale(){
+
+      const data = this.$route.query.data;
         
-        if (data && typeof data === 'string' && data.trim() !== '') {
+      if (data && typeof data === "string" && data.trim() !== "") {
 
-          const item = JSON.parse(data);
+        const item = JSON.parse(data);
 
-          this.sale.id          = item.id;
-          this.sale.consecutive = item.consecutive;
-          this.sale.date        = item.date;
-          this.sale.client      = item.client;
-          this.sale.description = item.description;
-          this.sale.subtotal    = item.subtotal;
-          this.sale.deposit     = item.deposit;
-          this.sale.consumption = item.consumption;
-          this.sale.boleta_factura = item.boleta_factura;
-          this.sale.ruc         = item.ruc;
-          this.sale.total       = item.total;
-          this.sale.details     = item.details;
+        this.sale.id          = item.id;
+        this.sale.consecutive = item.consecutive;
+        this.sale.date        = item.date;
+        this.sale.client      = item.client;
+        this.sale.description = item.description;
+        this.sale.subtotal    = item.subtotal;
+        this.sale.deposit     = item.deposit;
+        this.sale.consumption = item.consumption;
+        this.sale.boleta_factura = item.boleta_factura;
+        this.sale.ruc         = item.ruc;
+        this.sale.total       = item.total;
+        this.sale.details     = item.details;
 
-          this.disabledGeneral  = true;
-          this.title = "Modificar Venta";
+        this.disabledGeneral  = true;
+        this.title = "Modificar Venta";
 
-        }
+      }
 
-      },
-      async downloadReport(method, extention, message) {
+    },
+    async downloadReport(method, extention, message) {
 
-        let el = this;
+      let el = this;
 
-        Swal.fire({
-          title: "Ticket",
-          html: "¿Desea imprimir el ticket?",
-          icon: "warning",
-          confirmButtonText: "Sí",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "No"
-        })
+      Swal.fire({
+        title: "Ticket",
+        html: "¿Desea imprimir el ticket?",
+        icon: "warning",
+        confirmButtonText: "Sí",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "No"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -391,187 +391,187 @@
 
         });
 
-      },
-      validateNumber(event) {
+    },
+    validateNumber(event) {
 
-        const key = event.key;
+      const key = event.key;
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
 
-      },
-      getCurrentDate() {
+    },
+    getCurrentDate() {
         
-        const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const year = today.getFullYear();
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, "0");
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const year = today.getFullYear();
 
-        return `${day}/${month}/${year}`;
+      return `${day}/${month}/${year}`;
       
-      },
-      openModalDetail(){
-        this.flagModalDetail = true;
-      },
-      closeModalDetail(){
-        this.flagModalDetail = false;
-      },
-      getDetail(data){
+    },
+    openModalDetail(){
+      this.flagModalDetail = true;
+    },
+    closeModalDetail(){
+      this.flagModalDetail = false;
+    },
+    getDetail(data){
 
-        let total = (data.amount * data.price).toFixed(4);
+      let total = (data.amount * data.price).toFixed(4);
 
-        const newDetail = {
-          "product": {
-            "id": data.product.id,
-            "name": data.product.name,
-            "um": data.um,
-            // "um": data.product.um,
-          },
-          amount: data.amount,
-          // name_unit_measure: data.product.um,
-          name_unit_measure: data.um_name,
-          price: data.price,
-          total: total,
-        };
+      const newDetail = {
+        "product": {
+          "id": data.product.id,
+          "name": data.product.name,
+          "um": data.um,
+          // "um": data.product.um,
+        },
+        amount: data.amount,
+        // name_unit_measure: data.product.um,
+        name_unit_measure: data.um_name,
+        price: data.price,
+        total: total,
+      };
 
-        this.sale.details.push(newDetail);
-        this.getTotalGeneral();
+      this.sale.details.push(newDetail);
+      this.getTotalGeneral();
 
-      },
-      getSetData(data){
+    },
+    getSetData(data){
 
-        let formData = new FormData();
-        let id = -1;
-        let idUser = sessionStorage.getItem('id');
+      let formData = new FormData();
+      let id = -1;
+      let idUser = sessionStorage.getItem("id");
 
-        if(idUser == undefined || idUser == null || idUser == ""){
-            if (this.$route.name !== 'Login') {
-                Swal.fire("Alerta", "Sesión Expirada", "warning");
-                this.$router.push({ name: 'Login' });
-            }
+      if(idUser == undefined || idUser == null || idUser == ""){
+        if (this.$route.name !== "Login") {
+          Swal.fire("Alerta", "Sesión Expirada", "warning");
+          this.$router.push({ name: "Login" });
         }
+      }
 
-        formData.append('user_id', idUser);
-        formData.append('client_id', data.client.id);
-        formData.append('deposit', data.deposit);
-        formData.append('consumption', data.consumption);
-        formData.append('subtotal', data.subtotal);
-        formData.append('total', data.total);
-        formData.append('type', data.type);
-        formData.append('boleta_factura', data.boleta_factura);
-        formData.append('ruc', data.ruc);
-        formData.append('description', data.description);
+      formData.append("user_id", idUser);
+      formData.append("client_id", data.client.id);
+      formData.append("deposit", data.deposit);
+      formData.append("consumption", data.consumption);
+      formData.append("subtotal", data.subtotal);
+      formData.append("total", data.total);
+      formData.append("type", data.type);
+      formData.append("boleta_factura", data.boleta_factura);
+      formData.append("ruc", data.ruc);
+      formData.append("description", data.description);
 
-        (data.details).forEach(function(detail, index) {
+      (data.details).forEach(function(detail, index) {
 
-          id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+        id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
 
-          formData.append(`details[${index}][id]`, id);
-          formData.append(`details[${index}][product_id]`, detail.product.id);
-          formData.append(`details[${index}][um]`, detail.product.um);
-          formData.append(`details[${index}][amount]`, detail.amount);
-          formData.append(`details[${index}][name_unit_measure]`, detail.name_unit_measure);
-          formData.append(`details[${index}][price]`, detail.price);
-          formData.append(`details[${index}][total]`, detail.total);
+        formData.append(`details[${index}][id]`, id);
+        formData.append(`details[${index}][product_id]`, detail.product.id);
+        formData.append(`details[${index}][um]`, detail.product.um);
+        formData.append(`details[${index}][amount]`, detail.amount);
+        formData.append(`details[${index}][name_unit_measure]`, detail.name_unit_measure);
+        formData.append(`details[${index}][price]`, detail.price);
+        formData.append(`details[${index}][total]`, detail.total);
 
-        });
+      });
 
-        return formData;
+      return formData;
 
-      },
-      getTotalGeneral() {
+    },
+    getTotalGeneral() {
 
-        let total = 0;
-        let deposit = (this.sale.deposit == "" || this.sale.type == "contado") ? 0 : this.sale.deposit;
-        // let consumption = (this.sale.consumption == "") ? 0 : this.sale.consumption;
+      let total = 0;
+      let deposit = (this.sale.deposit == "" || this.sale.type == "contado") ? 0 : this.sale.deposit;
+      // let consumption = (this.sale.consumption == "") ? 0 : this.sale.consumption;
 
-        for (let index = 0; index < this.sale.details.length; index++) {
-          total += parseFloat(this.sale.details[index].price) * parseFloat(this.sale.details[index].amount);
-        }
+      for (let index = 0; index < this.sale.details.length; index++) {
+        total += parseFloat(this.sale.details[index].price) * parseFloat(this.sale.details[index].amount);
+      }
 
-        // this.sale.total = parseFloat(total) + parseFloat(consumption);
-        this.sale.total = parseFloat(total);
+      // this.sale.total = parseFloat(total) + parseFloat(consumption);
+      this.sale.total = parseFloat(total);
 
-        if(deposit > total){
+      if(deposit > total){
 
-          this.sale.deposit  = 0;
-          this.sale.subtotal = parseFloat(total);
-          this.sale.total    = parseFloat(total);
-          // this.sale.subtotal = parseFloat(total) + parseFloat(consumption);
-          // this.sale.total    = parseFloat(total) + parseFloat(consumption);
+        this.sale.deposit  = 0;
+        this.sale.subtotal = parseFloat(total);
+        this.sale.total    = parseFloat(total);
+        // this.sale.subtotal = parseFloat(total) + parseFloat(consumption);
+        // this.sale.total    = parseFloat(total) + parseFloat(consumption);
 
-          Swal.fire("Alerta", "El depósito no puede ser mayor que el total", "warning");
+        Swal.fire("Alerta", "El depósito no puede ser mayor que el total", "warning");
 
-        } else {
+      } else {
 
-          this.sale.subtotal = parseFloat(total);
-          // this.sale.subtotal = parseFloat(total) + parseFloat(consumption);
-          this.sale.total     = parseFloat(this.sale.subtotal) - parseFloat(deposit);
+        this.sale.subtotal = parseFloat(total);
+        // this.sale.subtotal = parseFloat(total) + parseFloat(consumption);
+        this.sale.total     = parseFloat(this.sale.subtotal) - parseFloat(deposit);
 
-        }
+      }
 
-        return total;
+      return total;
 
-      },
-      preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
+    },
+    preventInvalidDecimal(event) {
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
 
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
 
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
 
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        // Limitar la parte decimal a 2 dígitos
-        if (decimalPart && decimalPart.length >= 2 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
-    }
+      // Limitar la parte decimal a 2 dígitos
+      if (decimalPart && decimalPart.length >= 2 && value.includes(".")) {
+        event.preventDefault();
+      }
+    },
   }
+};
 
 </script>

@@ -42,14 +42,14 @@
 </template>
 
 <script>
-import TheHeaderDropdownAccnt from './TheHeaderDropdownAccnt'
-import TheHeaderDropdownNotif from './TheHeaderDropdownNotif'
+import TheHeaderDropdownAccnt from "./TheHeaderDropdownAccnt";
+import TheHeaderDropdownNotif from "./TheHeaderDropdownNotif";
 
 export default {
-  name: 'TheHeader',
+  name: "TheHeader",
   components: {
     TheHeaderDropdownAccnt,
     TheHeaderDropdownNotif,
   }
-}
+};
 </script>

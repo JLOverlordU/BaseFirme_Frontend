@@ -58,10 +58,10 @@
 
 <script>
 
-import {list} from '../../assets/js/methods/functions.js'
+import {list} from "../../assets/js/methods/functions.js";
 
 export default {
-  name: 'ModalStockHistory',
+  name: "ModalStockHistory",
   props: {
     isVisibleModalHistory: {
       type: Boolean,
@@ -76,11 +76,11 @@ export default {
       type: Array,
       default() {
         return [
-            { key: "index", label: "#" },
-            { key: "date", label: "Día" },
-            { key: 'stock', label: 'Stock' },
-            { key: "type", label: "Tipo" },
-            { key: "description", label: "Descripción" },
+          { key: "index", label: "#" },
+          { key: "date", label: "Día" },
+          { key: "stock", label: "Stock" },
+          { key: "type", label: "Tipo" },
+          { key: "description", label: "Descripción" },
         ];
       },
     },

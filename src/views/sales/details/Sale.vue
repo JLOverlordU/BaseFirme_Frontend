@@ -89,87 +89,87 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {report, ticket} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {report, ticket} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'Sale',
-    data() {
-      return {
-        loading: false,
-        data: {},
-        sale: {
-          id: "",
-          consecutive: "",
-          date: "",
-          client: "",
-          description: "",
-          subtotal: 0,
-          deposit: 0,
-          consumption: 0,
-          type: "",
-          boleta_factura: "",
-          ruc: "",
-          total: 0,
-          details: []
-        },
-      };
-    },
-    async mounted() {
-      await this.getSale();
-    },
-    methods: {
-      async getSale() {
-        const data = this.$route.query.data;
-
-        if (data && typeof data === 'string' && data.trim() !== '') {
-          const item = JSON.parse(data);
-
-          this.sale.id = item.id;
-          this.sale.consecutive = item.consecutive;
-          this.sale.date = item.date;
-          this.sale.client = item.client;
-          this.sale.description = item.description;
-          this.sale.subtotal = item.subtotal;
-          this.sale.deposit = item.deposit;
-          this.sale.consumption = item.consumption;
-          this.sale.type = item.type;
-          this.sale.boleta_factura = item.boleta_factura;
-          this.sale.ruc = item.ruc;
-          this.sale.total = item.total;
-          this.sale.details = item.details;
-        }
+export default {
+  name: "Sale",
+  data() {
+    return {
+      loading: false,
+      data: {},
+      sale: {
+        id: "",
+        consecutive: "",
+        date: "",
+        client: "",
+        description: "",
+        subtotal: 0,
+        deposit: 0,
+        consumption: 0,
+        type: "",
+        boleta_factura: "",
+        ruc: "",
+        total: 0,
+        details: []
       },
-      async downloadReport(method, type, extention) {
+    };
+  },
+  async mounted() {
+    await this.getSale();
+  },
+  methods: {
+    async getSale() {
+      const data = this.$route.query.data;
 
-        this.loading = true;
+      if (data && typeof data === "string" && data.trim() !== "") {
+        const item = JSON.parse(data);
 
-        try {
+        this.sale.id = item.id;
+        this.sale.consecutive = item.consecutive;
+        this.sale.date = item.date;
+        this.sale.client = item.client;
+        this.sale.description = item.description;
+        this.sale.subtotal = item.subtotal;
+        this.sale.deposit = item.deposit;
+        this.sale.consumption = item.consumption;
+        this.sale.type = item.type;
+        this.sale.boleta_factura = item.boleta_factura;
+        this.sale.ruc = item.ruc;
+        this.sale.total = item.total;
+        this.sale.details = item.details;
+      }
+    },
+    async downloadReport(method, type, extention) {
 
-          const url = this.$store.state.url;
+      this.loading = true;
 
-          if(type == "excel"){
-            await report(url+method, this.sale, "reporte N°"+this.sale.consecutive+extention);
-          } else {
-            await ticket(url+method, this.sale, "reporte N°"+this.sale.consecutive+extention);
-          }
+      try {
 
-        } catch (errors) {
+        const url = this.$store.state.url;
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;        
-
+        if(type == "excel"){
+          await report(url+method, this.sale, "reporte N°"+this.sale.consecutive+extention);
+        } else {
+          await ticket(url+method, this.sale, "reporte N°"+this.sale.consecutive+extention);
         }
 
-      },
-    }
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loading = false;        
+
+      }
+
+    },
   }
+};
 
 </script>

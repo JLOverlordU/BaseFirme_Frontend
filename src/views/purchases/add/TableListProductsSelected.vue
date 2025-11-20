@@ -62,62 +62,62 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableListProductsSelected',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'product', label: 'Producto' },
-            { key: 'name_unit_measure', label: 'Unidad de Medida' },
-            { key: 'amount', label: 'Cantidad' },
-            // { key: 'amount_kg', label: 'KG/UND' },
-            // { key: 'amount_saco', label: 'SACO/UND' },
-            { key: 'price', label: 'Precio' },
-            { key: 'total', label: 'Total' },
-            { key: 'buttonDelete', label: 'Acciones' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    data () {
-      return {
-        prefix: "purchase_details",
-        loadingButtonEdit: false,
-        loadingProducts: true,
-        filters: [],
+export default {
+  name: "TableListProductsSelected",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "product", label: "Producto" },
+          { key: "name_unit_measure", label: "Unidad de Medida" },
+          { key: "amount", label: "Cantidad" },
+          // { key: 'amount_kg', label: 'KG/UND' },
+          // { key: 'amount_saco', label: 'SACO/UND' },
+          { key: "price", label: "Precio" },
+          { key: "total", label: "Total" },
+          { key: "buttonDelete", label: "Acciones" },
+        ];
       }
     },
-    methods: {
-      async deleteDetail(index, id, name) {
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  data () {
+    return {
+      prefix: "purchase_details",
+      loadingButtonEdit: false,
+      loadingProducts: true,
+      filters: [],
+    };
+  },
+  methods: {
+    async deleteDetail(index, id, name) {
 
-        let el = this;
+      let el = this;
 
-        if(id == null || id == "" ||id == undefined){
-          id = null;
-        }
+      if(id == null || id == "" ||id == undefined){
+        id = null;
+      }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará el detalle '${name}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará el detalle '${name}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -132,7 +132,7 @@
                 if (response.status === 200) {
 
                   el.items.splice(index, 1);
-                  el.$emit('get-total-general', index);
+                  el.$emit("get-total-general", index);
                   Swal.fire("Alerta", response.data.message, "success");
 
                 }
@@ -158,9 +158,9 @@
 
         });
 
-      },
-    }
+    },
   }
+};
 
 </script>
 

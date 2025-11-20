@@ -124,95 +124,95 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import * as XLSX from 'xlsx';
-  import {list, destroy, report} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
+import {list, destroy, report} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableFormula',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'name', label: 'Nombre' },
-            { key: 'total', label: 'Total' },
-            { key: 'cost_total', label: 'Costo Total' },
-            { key: 'unit_measure', label: 'Unidad de Medida' },
-            { key: 'buttonDownload', label: 'Descargar', _style:'min-width:20%;' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean,
-    },
-    mounted() {
-      this.getFormulas();
-    },
-    data () {
-      return {
-        prefix_list: "formulas",
-        prefix: "formula",
-        formulas: [],
-        loading: true,
-        filters: {
-          id            : "",
-          name          : "",
-          nucleo        : "",
-          unit_measure  : "",
-        },
+export default {
+  name: "TableFormula",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "name", label: "Nombre" },
+          { key: "total", label: "Total" },
+          { key: "cost_total", label: "Costo Total" },
+          { key: "unit_measure", label: "Unidad de Medida" },
+          { key: "buttonDownload", label: "Descargar", _style:"min-width:20%;" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    methods: {
-      async getFormulas(){
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean,
+  },
+  mounted() {
+    this.getFormulas();
+  },
+  data () {
+    return {
+      prefix_list: "formulas",
+      prefix: "formula",
+      formulas: [],
+      loading: true,
+      filters: {
+        id            : "",
+        name          : "",
+        nucleo        : "",
+        unit_measure  : "",
+      },
+    };
+  },
+  methods: {
+    async getFormulas(){
         
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
           
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-          if (response.status === 200) {            
-            this.formulas = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
+        if (response.status === 200) {            
+          this.formulas = response.data.data;
         }
 
-      },
-      async deleteFormula(id, name){
+      } catch (errors) {
 
-        let el = this;
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará la fórmula '${name}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    async deleteFormula(id, name){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará la fórmula '${name}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -243,107 +243,107 @@
 
         });
 
-      },
-      downloadExcelFormulas() {
+    },
+    downloadExcelFormulas() {
     
-        let data = [];
-        let formulas = this.formulas;
+      let data = [];
+      let formulas = this.formulas;
         
-        formulas.forEach(formula => {
-            data.push({
-                'Nombre'            : formula.name,
-                'Unidad de Medida'  : formula.unit_measure,
-                'Núcleo'            : formula.nucleo,
-                'Total'             : formula.total
-            });
+      formulas.forEach(formula => {
+        data.push({
+          "Nombre"            : formula.name,
+          "Unidad de Medida"  : formula.unit_measure,
+          "Núcleo"            : formula.nucleo,
+          "Total"             : formula.total
         });
+      });
 
-        // Convertir los datos a una hoja de trabajo de Excel
-        const worksheet = XLSX.utils.json_to_sheet(data);
+      // Convertir los datos a una hoja de trabajo de Excel
+      const worksheet = XLSX.utils.json_to_sheet(data);
 
-        // Obtener las cabeceras (letras de las columnas) y aplicar estilos
-        const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-            if (!worksheet[cellAddress]) continue;
+      // Obtener las cabeceras (letras de las columnas) y aplicar estilos
+      const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
+      for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (!worksheet[cellAddress]) continue;
 
-            worksheet[cellAddress].s = {
-                fill: {
-                    fgColor: { rgb: "FFFF00" } // Fondo amarillo (RGB hex)
-                },
-                font: {
-                    bold: true,
-                    color: { rgb: "000000" } // Texto negro
-                },
-                alignment: {
-                    horizontal: "center"
-                }
-            };
-        }
-
-        // Crear un nuevo libro y agregar la hoja de trabajo
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos');
-
-        // Generar el archivo de Excel
-        const excelBuffer = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-            cellStyles: true
-        });
-
-        // Crear un blob y desencadenar la descarga
-        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'reporte_formulas.xlsx');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-      },
-      async downloadFormula(id){
-
-        this.loading = true;
-
-        try {
-
-          this.filters.id = id;
-          const url = this.$store.state.url;
-          await report(url+"formula_excel", this.filters, "reporte fórmula.xlsx");
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        worksheet[cellAddress].s = {
+          fill: {
+            fgColor: { rgb: "FFFF00" } // Fondo amarillo (RGB hex)
+          },
+          font: {
+            bold: true,
+            color: { rgb: "000000" } // Texto negro
+          },
+          alignment: {
+            horizontal: "center"
           }
+        };
+      }
 
-        } finally {
+      // Crear un nuevo libro y agregar la hoja de trabajo
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Productos");
 
-          this.loading = false;
+      // Generar el archivo de Excel
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+        cellStyles: true
+      });
 
+      // Crear un blob y desencadenar la descarga
+      const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "reporte_formulas.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    },
+    async downloadFormula(id){
+
+      this.loading = true;
+
+      try {
+
+        this.filters.id = id;
+        const url = this.$store.state.url;
+        await report(url+"formula_excel", this.filters, "reporte fórmula.xlsx");
+
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      cleanFilters() {
-        this.filters = {
-          date        : "",
-          start_date  : "",
-          end_date    : "",
-          product     : "",
-        };
-      },
-      goToReceiver(item) {        
-        this.$router.push({ 
-          name: 'Agregar Fórmula', 
-          query: { data: JSON.stringify(item) }
-        });
+      } finally {
+
+        this.loading = false;
+
       }
+
+    },
+    cleanFilters() {
+      this.filters = {
+        date        : "",
+        start_date  : "",
+        end_date    : "",
+        product     : "",
+      };
+    },
+    goToReceiver(item) {        
+      this.$router.push({ 
+        name: "Agregar Fórmula", 
+        query: { data: JSON.stringify(item) }
+      });
     }
   }
+};
 
 </script>
 

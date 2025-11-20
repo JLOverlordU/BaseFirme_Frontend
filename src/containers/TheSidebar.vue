@@ -17,18 +17,18 @@
 </template>
 
 <script>
-import SidebarItems from './SidebarItems'
+import SidebarItems from "./SidebarItems";
 export default {
-  name: 'TheSidebar',
+  name: "TheSidebar",
   extends: SidebarItems,
   computed: {
     show () {
-      return this.$store.state.sidebarShow
+      return this.$store.state.sidebarShow;
     },
     minimize () {
-      return this.$store.state.sidebarMinimize
+      return this.$store.state.sidebarMinimize;
     }
   }
-}
+};
 </script>
 

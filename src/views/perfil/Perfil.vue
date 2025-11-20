@@ -168,128 +168,128 @@
 
 <script>
   
-  import Swal from "sweetalert2"
-  import {save, show} from '../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {save, show} from "../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'Perfil',
-    data () {
-      return { 
-        prefix: "user",
-        user: {
-          id        : "",
-          username  : "",
-          name      : "",
-          email     : "",
-          phone     : "",
-          password  : "",
-          role      : "",
-          role_id   : "",
-        },
-        textButton: "Guardar",
-        loading: true,
-        loadingModal: false,
-        flagModal: false,
-      }
-    },
-    mounted() {
-      this.getUser();
-    },
-    methods: {
-      async getUser(){
+export default {
+  name: "Perfil",
+  data () {
+    return { 
+      prefix: "user",
+      user: {
+        id        : "",
+        username  : "",
+        name      : "",
+        email     : "",
+        phone     : "",
+        password  : "",
+        role      : "",
+        role_id   : "",
+      },
+      textButton: "Guardar",
+      loading: true,
+      loadingModal: false,
+      flagModal: false,
+    };
+  },
+  mounted() {
+    this.getUser();
+  },
+  methods: {
+    async getUser(){
 
-        let id = sessionStorage.getItem('id');
+      let id = sessionStorage.getItem("id");
         
-        if(id!= undefined && id!=null && id!= ""){
+      if(id!= undefined && id!=null && id!= ""){
 
-          const url = this.$store.state.url;
-          const response = await show(url+ this.prefix +`/${id}`);
+        const url = this.$store.state.url;
+        const response = await show(url+ this.prefix +`/${id}`);
             
-          if (response.status === 200) {
+        if (response.status === 200) {
                         
-            let data = response?.data?.data;
+          let data = response?.data?.data;
                           
-            this.user.id        = data?.id;
-            this.user.username  = data?.username;
-            this.user.name      = data?.name;
-            this.user.email     = data?.email;
-            this.user.phone     = data?.phone;
-            this.user.password  = data?.password;
-            this.user.role      = data?.role;
-            this.user.role_id   = data?.role_id;
+          this.user.id        = data?.id;
+          this.user.username  = data?.username;
+          this.user.name      = data?.name;
+          this.user.email     = data?.email;
+          this.user.phone     = data?.phone;
+          this.user.password  = data?.password;
+          this.user.role      = data?.role;
+          this.user.role_id   = data?.role_id;
   
-          }
-
-        } else {
-     
-          if (this.$route.name !== 'Login') {
-            this.$router.push({ name: 'Login' });
-          }
-     
         }
 
-        this.loading = false;
-
-      },
-      async saveUser(){
-
-        this.loadingModal = true;
-        
-        try {
-          
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.user);
-          const response = await save(url + this.prefix, data, this.user.id);
-                    
-          if (response.status === 200) {
-                        
-            sessionStorage.setItem('username', this.user?.username);
-            sessionStorage.setItem('name', this.user?.name);
-            sessionStorage.setItem('email', this.user?.email);
-            sessionStorage.setItem('phone', this.user?.phone);
-            
-            Swal.fire("Alerta", response.data.message, "success");
-            this.flagModal = false;
-
-          }
-
-        } catch (errors) {
-          
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
- 
-          this.loadingModal = false;
-        
+      } else {
+     
+        if (this.$route.name !== "Login") {
+          this.$router.push({ name: "Login" });
         }
+     
+      }
 
-      },
-      getSetData(data){
+      this.loading = false;
 
-        let formData = new FormData();
-        
-        formData.append('username', data.username);
-        formData.append('name', data.name);
-        formData.append('email', data.email);
-        formData.append('phone', data.phone);
-        formData.append('password', data.password);
-        formData.append('role_id', data.role_id);
-        
-        return formData;
-
-      },
-      async editModal(){
-
-        this.flagModal  = true;
-        this.textButton = "Modificar";
-
-      },
     },
-  }
+    async saveUser(){
+
+      this.loadingModal = true;
+        
+      try {
+          
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.user);
+        const response = await save(url + this.prefix, data, this.user.id);
+                    
+        if (response.status === 200) {
+                        
+          sessionStorage.setItem("username", this.user?.username);
+          sessionStorage.setItem("name", this.user?.name);
+          sessionStorage.setItem("email", this.user?.email);
+          sessionStorage.setItem("phone", this.user?.phone);
+            
+          Swal.fire("Alerta", response.data.message, "success");
+          this.flagModal = false;
+
+        }
+
+      } catch (errors) {
+          
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+ 
+        this.loadingModal = false;
+        
+      }
+
+    },
+    getSetData(data){
+
+      let formData = new FormData();
+        
+      formData.append("username", data.username);
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("phone", data.phone);
+      formData.append("password", data.password);
+      formData.append("role_id", data.role_id);
+        
+      return formData;
+
+    },
+    async editModal(){
+
+      this.flagModal  = true;
+      this.textButton = "Modificar";
+
+    },
+  },
+};
 
 </script>
 

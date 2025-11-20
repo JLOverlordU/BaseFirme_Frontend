@@ -6,10 +6,10 @@
 </template>
 
 <script>
-import { CChartPie } from '@coreui/vue-chartjs'
+import { CChartPie } from "@coreui/vue-chartjs";
 
 export default {
-  name: 'CChartPurchasesPerProvider',
+  name: "CChartPurchasesPerProvider",
   props: {
     purchases_per_client: Object,
   },
@@ -19,15 +19,15 @@ export default {
       return [
         {
           backgroundColor: [
-            '#41B883',
-            '#E46651',
-            '#00D8FF',
-            '#DD1B16'
+            "#41B883",
+            "#E46651",
+            "#00D8FF",
+            "#DD1B16"
           ],
           data: this.purchases_per_client.counts
         }
-      ]
+      ];
     }
   }
-}
+};
 </script>

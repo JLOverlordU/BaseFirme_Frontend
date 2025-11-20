@@ -184,181 +184,181 @@
 
 <script>
 
-  import CTableProductsSelected from './TableListProductsSelected.vue'
-  import ModalDetail from './ModalDetail.vue';
-  import Multiselect from 'vue-multiselect'
-  import Swal from "sweetalert2"
-  import {list, save, ticket} from '../../../assets/js/methods/functions.js'
+import CTableProductsSelected from "./TableListProductsSelected.vue";
+import ModalDetail from "./ModalDetail.vue";
+import Multiselect from "vue-multiselect";
+import Swal from "sweetalert2";
+import {list, save, ticket} from "../../../assets/js/methods/functions.js";
 
-  import 'vue-select/dist/vue-select.css'
-  import 'vue-multiselect/dist/vue-multiselect.min.css'
+import "vue-select/dist/vue-select.css";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
-  export default {
-    name: 'AddPurchase',
-    data() {
-      return {
-        prefix: "purchase",
-        prefix_providers: "providers",
-        providers: [],
-        title: "Nueva Compra",
-        btnSaveSale: "Guardar",
-        disabledGeneral: false,
-        types: ['contado', 'credito'],
-        types_purchases: ['boleta', 'factura'],
-        purchase: {
-          id: "",
-          consecutive: "",
-          date: this.getCurrentDate(),
-          provider: "",
-          ruc: "",
-          description: "",
-          subtotal: 0,
-          deposit: 0,
-          consumption: 0,
-          total: 0,
-          type: "contado",
-          boleta_factura: "boleta",
-          details: []
-        },
-        flagModalDetail: false,
-        loadingProviders: false,
-        loadingButtonsActions: true,
+export default {
+  name: "AddPurchase",
+  data() {
+    return {
+      prefix: "purchase",
+      prefix_providers: "providers",
+      providers: [],
+      title: "Nueva Compra",
+      btnSaveSale: "Guardar",
+      disabledGeneral: false,
+      types: ["contado", "credito"],
+      types_purchases: ["boleta", "factura"],
+      purchase: {
+        id: "",
+        consecutive: "",
+        date: this.getCurrentDate(),
+        provider: "",
+        ruc: "",
+        description: "",
+        subtotal: 0,
+        deposit: 0,
+        consumption: 0,
+        total: 0,
+        type: "contado",
+        boleta_factura: "boleta",
+        details: []
+      },
+      flagModalDetail: false,
+      loadingProviders: false,
+      loadingButtonsActions: true,
+    };
+  },
+  async mounted() {
+    await this.getProviders();
+    await this.getPurchase();
+    this.getTotalGeneral();
+  },
+  components: {
+    ModalDetail,
+    Multiselect,
+    CTableProductsSelected
+  },
+  methods: {
+    async getProviders(){
+
+      this.loadingProviders = true;
+
+      try {
+
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_providers);
+
+        if (response.status === 200) {
+
+          let setProviders = (response.data.data).map(role => ({
+            id: role.id,
+            name: role.name
+          }));
+
+          this.providers = setProviders;
+
+        }
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loadingProviders = false;
+
       }
+
     },
-    async mounted() {
-      await this.getProviders();
-      await this.getPurchase();
-      this.getTotalGeneral();
-    },
-    components: {
-      ModalDetail,
-      Multiselect,
-      CTableProductsSelected
-    },
-    methods: {
-      async getProviders(){
+    async savePurchase(){
 
-        this.loadingProviders = true;
+      this.loadingButtonsActions = false;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_providers);
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.purchase);
+        const response = await save(url + this.prefix, data, this.purchase.id);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
 
-            let setProviders = (response.data.data).map(role => ({
-              id: role.id,
-              name: role.name
-            }));
+          if(response.data.flag){
 
-            this.providers = setProviders;
+            // Swal.fire("Alerta", response.data.message, "success");
 
-          }
-        } catch (errors) {
+            this.title = "Modificar Compra";
+            this.btnSaveSale = "Modificar";
+            this.purchase.id = response?.data?.data?.id;
+            this.purchase.consecutive = response?.data?.data?.consecutive;
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
+            //? Imprime el ticket
+            await this.downloadReport("purchase_pdf", ".pdf", response.data.message);
+
+            this.$router.push({ 
+              name: "Listado compras"
+            });
+
           } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
 
-        } finally {
-
-          this.loadingProviders = false;
-
-        }
-
-      },
-      async savePurchase(){
-
-        this.loadingButtonsActions = false;
-
-        try {
-
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.purchase);
-          const response = await save(url + this.prefix, data, this.purchase.id);
-
-          if (response.status === 200) {
-
-            if(response.data.flag){
-
-              // Swal.fire("Alerta", response.data.message, "success");
-
-              this.title = "Modificar Compra";
-              this.btnSaveSale = "Modificar";
-              this.purchase.id = response?.data?.data?.id;
-              this.purchase.consecutive = response?.data?.data?.consecutive;
-
-              //? Imprime el ticket
-              await this.downloadReport('purchase_pdf', '.pdf', response.data.message);
-
-              this.$router.push({ 
-                name: 'Listado compras'
-              });
-
-            } else {
-
-              Swal.fire("Alerta", response.data.message, "warning");
-
-            }
+            Swal.fire("Alerta", response.data.message, "warning");
 
           }
 
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loadingButtonsActions = true;
-
         }
 
-      },
-      async getPurchase(){
+      } catch (errors) {
 
-        const data = this.$route.query.data;
-
-        if (data && typeof data === 'string' && data.trim() !== '') {
-
-          const item = JSON.parse(data);
-
-          this.purchase.id          = item.id;
-          this.purchase.consecutive = item.consecutive;
-          this.purchase.date        = item.date;
-          this.purchase.provider    = item.provider;
-          this.purchase.description = item.description;
-          this.purchase.subtotal    = item.subtotal;
-          this.purchase.deposit     = item.deposit;
-          this.purchase.consumption = item.consumption;
-          this.purchase.total       = item.total;
-          this.purchase.details     = item.details;
-
-          this.disabledGeneral  = true;
-          this.title = "Modificar Compra";
-
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async downloadReport(method, extention, message) {
+      } finally {
 
-        let el = this;
+        this.loadingButtonsActions = true;
 
-        Swal.fire({
-          title: "Ticket",
-          html: "¿Desea imprimir el ticket?",
-          icon: "warning",
-          confirmButtonText: "Sí",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "No"
-        })
+      }
+
+    },
+    async getPurchase(){
+
+      const data = this.$route.query.data;
+
+      if (data && typeof data === "string" && data.trim() !== "") {
+
+        const item = JSON.parse(data);
+
+        this.purchase.id          = item.id;
+        this.purchase.consecutive = item.consecutive;
+        this.purchase.date        = item.date;
+        this.purchase.provider    = item.provider;
+        this.purchase.description = item.description;
+        this.purchase.subtotal    = item.subtotal;
+        this.purchase.deposit     = item.deposit;
+        this.purchase.consumption = item.consumption;
+        this.purchase.total       = item.total;
+        this.purchase.details     = item.details;
+
+        this.disabledGeneral  = true;
+        this.title = "Modificar Compra";
+
+      }
+
+    },
+    async downloadReport(method, extention, message) {
+
+      let el = this;
+
+      Swal.fire({
+        title: "Ticket",
+        html: "¿Desea imprimir el ticket?",
+        icon: "warning",
+        confirmButtonText: "Sí",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "No"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -389,187 +389,187 @@
 
         });
 
-      },
-      validateNumber(event) {
+    },
+    validateNumber(event) {
 
-        const key = event.key;
+      const key = event.key;
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
+
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
+
+    },
+    getCurrentDate() {
+
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, "0");
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const year = today.getFullYear();
+
+      return `${day}/${month}/${year}`;
+
+    },
+    openModalDetail(){
+      this.flagModalDetail = true;
+    },
+    closeModalDetail(){
+      this.flagModalDetail = false;
+    },
+    getDetail(data){
+
+      let total = (data.amount * data.price).toFixed(4);
+
+      const newDetail = {
+        "product": {
+          "id": data.product.id,
+          "name": data.product.name,
+          "um": data.um,
+          // "um": data.product.um,
+        },
+        amount: data.amount,
+        // name_unit_measure: data.product.um,
+        name_unit_measure: data.um_name,
+        price: data.price,
+        total: total,
+      };
+
+      this.purchase.details.push(newDetail);
+      this.getTotalGeneral();
+
+    },
+    getSetData(data){
+
+      let formData = new FormData();
+      let id = -1;
+      let idUser = sessionStorage.getItem("id");
+
+      if(idUser == undefined || idUser == null || idUser == ""){
+        if (this.$route.name !== "Login") {
+          Swal.fire("Alerta", "Sesión Expirada", "warning");
+          this.$router.push({ name: "Login" });
         }
+      }
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      formData.append("user_id", idUser);
+      formData.append("provider_id", data.provider.id);
+      formData.append("deposit", data.deposit);
+      formData.append("consumption", data.consumption);
+      formData.append("subtotal", data.subtotal);
+      formData.append("total", data.total);
+      formData.append("type", data.type);
+      formData.append("boleta_factura", data.boleta_factura);
+      formData.append("ruc", data.ruc);
+      formData.append("description", data.description);
 
-      },
-      getCurrentDate() {
+      (data.details).forEach(function(detail, index) {
 
-        const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0');
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const year = today.getFullYear();
+        id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
 
-        return `${day}/${month}/${year}`;
+        formData.append(`details[${index}][id]`, id);
+        formData.append(`details[${index}][product_id]`, detail.product.id);
+        formData.append(`details[${index}][um]`, detail.product.um);
+        formData.append(`details[${index}][amount]`, detail.amount);
+        formData.append(`details[${index}][name_unit_measure]`, detail.name_unit_measure);
+        formData.append(`details[${index}][price]`, detail.price);
+        formData.append(`details[${index}][total]`, detail.total);
 
-      },
-      openModalDetail(){
-        this.flagModalDetail = true;
-      },
-      closeModalDetail(){
-        this.flagModalDetail = false;
-      },
-      getDetail(data){
+      });
 
-        let total = (data.amount * data.price).toFixed(4);
+      return formData;
 
-        const newDetail = {
-          "product": {
-            "id": data.product.id,
-            "name": data.product.name,
-            "um": data.um,
-            // "um": data.product.um,
-          },
-          amount: data.amount,
-          // name_unit_measure: data.product.um,
-          name_unit_measure: data.um_name,
-          price: data.price,
-          total: total,
-        };
+    },
+    getTotalGeneral() {
 
-        this.purchase.details.push(newDetail);
-        this.getTotalGeneral();
+      let total = 0;
+      let deposit = (this.purchase.deposit == "" || this.purchase.type == "contado") ? 0 : this.purchase.deposit;
+      // let consumption = (this.purchase.consumption == "") ? 0 : this.purchase.consumption;
 
-      },
-      getSetData(data){
+      for (let index = 0; index < this.purchase.details.length; index++) {
+        total += parseFloat(this.purchase.details[index].price) * parseFloat(this.purchase.details[index].amount);
+      }
 
-        let formData = new FormData();
-        let id = -1;
-        let idUser = sessionStorage.getItem('id');
+      // this.purchase.total = parseFloat(total) + parseFloat(consumption);
+      this.purchase.total = parseFloat(total);
 
-        if(idUser == undefined || idUser == null || idUser == ""){
-            if (this.$route.name !== 'Login') {
-                Swal.fire("Alerta", "Sesión Expirada", "warning");
-                this.$router.push({ name: 'Login' });
-            }
-        }
+      if(deposit > total){
 
-        formData.append('user_id', idUser);
-        formData.append('provider_id', data.provider.id);
-        formData.append('deposit', data.deposit);
-        formData.append('consumption', data.consumption);
-        formData.append('subtotal', data.subtotal);
-        formData.append('total', data.total);
-        formData.append('type', data.type);
-        formData.append('boleta_factura', data.boleta_factura);
-        formData.append('ruc', data.ruc);
-        formData.append('description', data.description);
+        this.purchase.deposit  = 0;
+        this.purchase.subtotal = parseFloat(total);
+        this.purchase.total    = parseFloat(total);
+        // this.purchase.subtotal = parseFloat(total) + parseFloat(consumption);
+        // this.purchase.total    = parseFloat(total) + parseFloat(consumption);
 
-        (data.details).forEach(function(detail, index) {
+        Swal.fire("Alerta", "El depósito no puede ser mayor que el total", "warning");
 
-            id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+      } else {
 
-            formData.append(`details[${index}][id]`, id);
-            formData.append(`details[${index}][product_id]`, detail.product.id);
-            formData.append(`details[${index}][um]`, detail.product.um);
-            formData.append(`details[${index}][amount]`, detail.amount);
-            formData.append(`details[${index}][name_unit_measure]`, detail.name_unit_measure);
-            formData.append(`details[${index}][price]`, detail.price);
-            formData.append(`details[${index}][total]`, detail.total);
+        this.purchase.subtotal = parseFloat(total);
+        // this.purchase.subtotal = parseFloat(total) + parseFloat(consumption);
+        this.purchase.total     = parseFloat(this.purchase.subtotal) - parseFloat(deposit);
 
-        });
+      }
 
-        return formData;
+      return total;
 
-      },
-      getTotalGeneral() {
+    },
+    preventInvalidDecimal(event) {
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
 
-        let total = 0;
-        let deposit = (this.purchase.deposit == "" || this.purchase.type == "contado") ? 0 : this.purchase.deposit;
-        // let consumption = (this.purchase.consumption == "") ? 0 : this.purchase.consumption;
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
 
-        for (let index = 0; index < this.purchase.details.length; index++) {
-          total += parseFloat(this.purchase.details[index].price) * parseFloat(this.purchase.details[index].amount);
-        }
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
 
-        // this.purchase.total = parseFloat(total) + parseFloat(consumption);
-        this.purchase.total = parseFloat(total);
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
 
-        if(deposit > total){
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-          this.purchase.deposit  = 0;
-          this.purchase.subtotal = parseFloat(total);
-          this.purchase.total    = parseFloat(total);
-          // this.purchase.subtotal = parseFloat(total) + parseFloat(consumption);
-          // this.purchase.total    = parseFloat(total) + parseFloat(consumption);
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
 
-          Swal.fire("Alerta", "El depósito no puede ser mayor que el total", "warning");
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
 
-        } else {
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
 
-          this.purchase.subtotal = parseFloat(total);
-          // this.purchase.subtotal = parseFloat(total) + parseFloat(consumption);
-          this.purchase.total     = parseFloat(this.purchase.subtotal) - parseFloat(deposit);
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
 
-        }
-
-        return total;
-
-      },
-      preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
-
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
-
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
-
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
-
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
-
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
-
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
-
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
-
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
-
-        // Limitar la parte decimal a 2 dígitos
-        if (decimalPart && decimalPart.length >= 2 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
-    }
+      // Limitar la parte decimal a 2 dígitos
+      if (decimalPart && decimalPart.length >= 2 && value.includes(".")) {
+        event.preventDefault();
+      }
+    },
   }
+};
 
 </script>

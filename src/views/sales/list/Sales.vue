@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import CTableWrapper from '../list/TableSale.vue'
+import CTableWrapper from "../list/TableSale.vue";
 
 export default {
-  name: 'Sales',
+  name: "Sales",
   components: { CTableWrapper },
-}
+};
 </script>

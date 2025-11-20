@@ -178,116 +178,116 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {list, report, ticket, destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {list, report, ticket, destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableSale',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'consecutive', label: 'Número de Venta' },
-            { key: 'date', label: 'Día de creación' },
-            { key: 'client', label: 'Cliente' },
-            { key: 'user_creator', label: 'Usuario Creador' },
-            { key: 'type', label: 'Modo' },
-            { key: 'boleta_factura', label: 'Tipo' },
-            { key: 'subtotal', label: 'Subtotal (S/.)' },
-            { key: 'deposit', label: 'Depositó (S/.)' },
-            // { key: 'consumption', label: 'Consumo' },
-            { key: 'total', label: 'Total (S/.)' },
-            { key: 'buttonTicket', label: 'Ticket', _style:'min-width:20%;' },
-            { key: 'buttonView', label: 'Ver', _style:'min-width:20%;' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    mounted() {
-      this.getSalesWithFilters();
-    },
-    data () {
-      return {
-        prefix_list: "sales",
-        prefix: "sale",
-        sales: [],
-        loading: true,
-        types: ['ambas', 'contado', 'credito'],
-        totalSubtotal: 0,
-        totalFinal: 0,
-        filters: {
-          consecutive : "",
-          date        : "",
-          type        : "ambas",
-          start_date  : "",
-          end_date    : "",
-          client      : "",
-          user        : "",
-        },
+export default {
+  name: "TableSale",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "Número de Venta" },
+          { key: "date", label: "Día de creación" },
+          { key: "client", label: "Cliente" },
+          { key: "user_creator", label: "Usuario Creador" },
+          { key: "type", label: "Modo" },
+          { key: "boleta_factura", label: "Tipo" },
+          { key: "subtotal", label: "Subtotal (S/.)" },
+          { key: "deposit", label: "Depositó (S/.)" },
+          // { key: 'consumption', label: 'Consumo' },
+          { key: "total", label: "Total (S/.)" },
+          { key: "buttonTicket", label: "Ticket", _style:"min-width:20%;" },
+          { key: "buttonView", label: "Ver", _style:"min-width:20%;" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    watch: {
-      sales: {
-        immediate: true,
-        handler(newSales) {
-          this.totalSubtotal = newSales.reduce((sum, sale) => sum + parseFloat(sale.subtotal || 0), 0);
-          this.totalFinal = newSales.reduce((sum, sale) => sum + parseFloat(sale.total || 0), 0);
-        }
-      }
-    },
-    methods: {
-      async getSalesWithFilters(){
-        
-        this.loading = true;
-
-        try {
-          
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
-
-          if (response.status === 200) {            
-            this.sales = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
-        }
-
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  mounted() {
+    this.getSalesWithFilters();
+  },
+  data () {
+    return {
+      prefix_list: "sales",
+      prefix: "sale",
+      sales: [],
+      loading: true,
+      types: ["ambas", "contado", "credito"],
+      totalSubtotal: 0,
+      totalFinal: 0,
+      filters: {
+        consecutive : "",
+        date        : "",
+        type        : "ambas",
+        start_date  : "",
+        end_date    : "",
+        client      : "",
+        user        : "",
       },
-      async deleteSale(id, consecutive){
+    };
+  },
+  watch: {
+    sales: {
+      immediate: true,
+      handler(newSales) {
+        this.totalSubtotal = newSales.reduce((sum, sale) => sum + parseFloat(sale.subtotal || 0), 0);
+        this.totalFinal = newSales.reduce((sum, sale) => sum + parseFloat(sale.total || 0), 0);
+      }
+    }
+  },
+  methods: {
+    async getSalesWithFilters(){
+        
+      this.loading = true;
 
-        let el = this;
+      try {
+          
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará la venta '${consecutive}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+        if (response.status === 200) {            
+          this.sales = response.data.data;
+        }
+
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    async deleteSale(id, consecutive){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará la venta '${consecutive}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -318,92 +318,92 @@
 
         });
 
-      },
-      async downloadExcelSale(){
+    },
+    async downloadExcelSale(){
         
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          await report(url+"sales_excel", this.filters, "reporte ventas.xlsx");
+        const url = this.$store.state.url;
+        await report(url+"sales_excel", this.filters, "reporte ventas.xlsx");
 
-        } catch (errors) {
+      } catch (errors) {
           
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async downloadReport(method, type, extention, sale) {
+      } finally {
+          
+        this.loading = false;
+        
+      }
 
-        this.loading = true;
+    },
+    async downloadReport(method, type, extention, sale) {
 
-        try {
+      this.loading = true;
 
-          const url = this.$store.state.url;
+      try {
 
-          if(type == "excel"){
-            await report(url+method, sale, "reporte N°"+sale.consecutive+extention);
-          } else {
-            await ticket(url+method, sale, "reporte N°"+sale.consecutive+extention);
-          }
+        const url = this.$store.state.url;
 
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;        
-
+        if(type == "excel"){
+          await report(url+method, sale, "reporte N°"+sale.consecutive+extention);
+        } else {
+          await ticket(url+method, sale, "reporte N°"+sale.consecutive+extention);
         }
 
-      },
-      cleanFilters() {
-        this.filters = {
-          consecutive : "",
-          date        : "",
-          type        : "ambas",
-          start_date  : "",
-          end_date    : "",
-          client      : "",
-          user        : "",
-        };
-      },
-      sendEditSale(item) {
-        this.$router.push({ 
-          name: 'Agregar venta', 
-          query: { data: JSON.stringify(item) }
-        });
-      },
-      sendViewSale(item) {
-        this.$router.push({ 
-          name: 'Detalle venta', 
-          query: { data: JSON.stringify(item) }
-        });
-      },
-      validateDates() {
-        if (this.filters.start_date && this.filters.end_date) {
-          if (this.filters.end_date < this.filters.start_date) {
-            Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
-            this.filters.end_date = '';
-          }
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loading = false;        
+
+      }
+
+    },
+    cleanFilters() {
+      this.filters = {
+        consecutive : "",
+        date        : "",
+        type        : "ambas",
+        start_date  : "",
+        end_date    : "",
+        client      : "",
+        user        : "",
+      };
+    },
+    sendEditSale(item) {
+      this.$router.push({ 
+        name: "Agregar venta", 
+        query: { data: JSON.stringify(item) }
+      });
+    },
+    sendViewSale(item) {
+      this.$router.push({ 
+        name: "Detalle venta", 
+        query: { data: JSON.stringify(item) }
+      });
+    },
+    validateDates() {
+      if (this.filters.start_date && this.filters.end_date) {
+        if (this.filters.end_date < this.filters.start_date) {
+          Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
+          this.filters.end_date = "";
         }
       }
     }
   }
+};
 
 </script>

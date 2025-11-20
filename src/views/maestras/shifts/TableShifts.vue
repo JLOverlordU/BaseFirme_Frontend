@@ -162,173 +162,173 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import * as XLSX from 'xlsx';
-  import {list, save, show, destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
+import {list, save, show, destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TableShifts',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'name', label: 'Nombre' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      caption: {
-        type: String,
-        default: 'TableShifts'
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean,
-    },
-    mounted() {
-      this.getShifts();
-    },
-    data () {
-      return {
-        prefix_list: "shifts",
-        prefix: "shift",
-        shifts: [],
-        loading: true,
-        shift: {
-          id: "",
-          name: "",
-        },
-        filters: {
-          name  : "",
-        },
-        
-        // Modal
-        titleModal: "Nuevo turno",
-        textButton: "Guardar",
-        flagModal: false,
-        loadingModal: false,
-        loadingButtonEdit: true,
+export default {
+  name: "TableShifts",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "name", label: "Nombre" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    methods: {
-      async getShifts(){
+    caption: {
+      type: String,
+      default: "TableShifts"
+    },
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean,
+  },
+  mounted() {
+    this.getShifts();
+  },
+  data () {
+    return {
+      prefix_list: "shifts",
+      prefix: "shift",
+      shifts: [],
+      loading: true,
+      shift: {
+        id: "",
+        name: "",
+      },
+      filters: {
+        name  : "",
+      },
         
-        this.loading = true;
-
-        try {
-          
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
-
-          if (response.status === 200) {
-            this.shifts = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
+      // Modal
+      titleModal: "Nuevo turno",
+      textButton: "Guardar",
+      flagModal: false,
+      loadingModal: false,
+      loadingButtonEdit: true,
+    };
+  },
+  methods: {
+    async getShifts(){
         
+      this.loading = true;
+
+      try {
+          
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
+
+        if (response.status === 200) {
+          this.shifts = response.data.data;
         }
 
-      },
-      async saveShift(){
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+          
+        this.loading = false;
         
-        this.loadingModal = true;
+      }
+
+    },
+    async saveShift(){
         
-        try {
+      this.loadingModal = true;
         
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.shift);
-          const response = await save(url + this.prefix, data, this.shift.id);
+      try {
+        
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.shift);
+        const response = await save(url + this.prefix, data, this.shift.id);
                     
-          if (response.status === 200) {
+        if (response.status === 200) {
             
-            this.getShifts();
+          this.getShifts();
             
-            Swal.fire("Alerta", response.data.message, "success");
-            this.flagModal = false;
+          Swal.fire("Alerta", response.data.message, "success");
+          this.flagModal = false;
 
-          }
+        }
 
-        } catch (errors) {
+      } catch (errors) {
           
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
 
-        } finally {
+      } finally {
  
-          this.loadingModal = false;
+        this.loadingModal = false;
         
-        }
+      }
 
-      },
-      async editModal(id){
+    },
+    async editModal(id){
 
-        try {
+      try {
         
-          this.flagModal = true;
-          this.loadingModal = true;
+        this.flagModal = true;
+        this.loadingModal = true;
 
-          const url = this.$store.state.url;
-          const response = await show(url+ this.prefix +`/${id}`);
+        const url = this.$store.state.url;
+        const response = await show(url+ this.prefix +`/${id}`);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
               
-            let data = response?.data?.data;
+          let data = response?.data?.data;
 
-            this.shift.id   = data?.id;
-            this.shift.name = data?.name;
-            this.titleModal = "Modificar Turno";
-            this.textButton = "Modificar";
+          this.shift.id   = data?.id;
+          this.shift.name = data?.name;
+          this.titleModal = "Modificar Turno";
+          this.textButton = "Modificar";
 
-          }
+        }
           
-        } catch (errors) {
+      } catch (errors) {
           
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loadingModal = false;
-        
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async deleteShift(id, name){
+      } finally {
 
-        let el = this;
+        this.loadingModal = false;
+        
+      }
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará el turno '${name}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+    },
+    async deleteShift(id, name){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará el turno '${name}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -359,89 +359,89 @@
 
         });
 
-      },
-      downloadExcelShifts() {
+    },
+    downloadExcelShifts() {
 
-        let data = [];
-        let shifts = this.shifts;
+      let data = [];
+      let shifts = this.shifts;
         
-        shifts.forEach(shift => {
-            data.push({
-                'Nombre': shift.name,
-            });
+      shifts.forEach(shift => {
+        data.push({
+          "Nombre": shift.name,
         });
+      });
 
-        // Convertir los datos a una hoja de trabajo de Excel
-        const worksheet = XLSX.utils.json_to_sheet(data);
+      // Convertir los datos a una hoja de trabajo de Excel
+      const worksheet = XLSX.utils.json_to_sheet(data);
 
-        // Obtener las cabeceras (letras de las columnas) y aplicar estilos
-        const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-            if (!worksheet[cellAddress]) continue;
+      // Obtener las cabeceras (letras de las columnas) y aplicar estilos
+      const headerRange = XLSX.utils.decode_range(worksheet["!ref"]);
+      for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (!worksheet[cellAddress]) continue;
 
-            worksheet[cellAddress].s = {
-                fill: {
-                    fgColor: { rgb: "FFFF00" } // Fondo amarillo (RGB hex)
-                },
-                font: {
-                    bold: true,
-                    color: { rgb: "000000" } // Texto negro
-                },
-                alignment: {
-                    horizontal: "center"
-                }
-            };
-        }
-
-        // Crear un nuevo libro y agregar la hoja de trabajo
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos');
-
-        // Generar el archivo de Excel
-        const excelBuffer = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-            cellStyles: true
-        });
-
-        // Crear un blob y desencadenar la descarga
-        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'reporte_turnos.xlsx');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-      },
-      openModal(){
-        this.cleanModal();
-        this.flagModal = true;
-      },
-      cleanModal(){
-        this.shift.id   = "";
-        this.shift.name = "";
-        this.titleModal = "Nuevo Turno";
-        this.textButton = "Guardar";
-      },
-      getSetData(data){
-          
-        let formData = new FormData();
-        
-        formData.append('name', data.name);
-        
-        return formData;
-
-      },
-      cleanFilters() {
-        this.filters = {
-          name  : "",
+        worksheet[cellAddress].s = {
+          fill: {
+            fgColor: { rgb: "FFFF00" } // Fondo amarillo (RGB hex)
+          },
+          font: {
+            bold: true,
+            color: { rgb: "000000" } // Texto negro
+          },
+          alignment: {
+            horizontal: "center"
+          }
         };
-      },
-    }
+      }
+
+      // Crear un nuevo libro y agregar la hoja de trabajo
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Productos");
+
+      // Generar el archivo de Excel
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+        cellStyles: true
+      });
+
+      // Crear un blob y desencadenar la descarga
+      const blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "reporte_turnos.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    },
+    openModal(){
+      this.cleanModal();
+      this.flagModal = true;
+    },
+    cleanModal(){
+      this.shift.id   = "";
+      this.shift.name = "";
+      this.titleModal = "Nuevo Turno";
+      this.textButton = "Guardar";
+    },
+    getSetData(data){
+          
+      let formData = new FormData();
+        
+      formData.append("name", data.name);
+        
+      return formData;
+
+    },
+    cleanFilters() {
+      this.filters = {
+        name  : "",
+      };
+    },
   }
+};
 
 </script>
 

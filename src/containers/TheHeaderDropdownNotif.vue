@@ -26,50 +26,50 @@
 </template>
 <script>
   
-  import Swal from "sweetalert2"
-  import {get} from '../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {get} from "../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TheHeaderDropdownNotif',
-    data () {
-      return {
-        prefix: "notifications",
-        notifications: [],
-        itemsCount: 0
-      }
-    },
-    async mounted() {
-      await this.getNotifications();
-    },
-    methods: {
-      async getNotifications(){
+export default {
+  name: "TheHeaderDropdownNotif",
+  data () {
+    return {
+      prefix: "notifications",
+      notifications: [],
+      itemsCount: 0
+    };
+  },
+  async mounted() {
+    await this.getNotifications();
+  },
+  methods: {
+    async getNotifications(){
   
-        try {
+      try {
           
-          const url = this.$store.state.url;
+        const url = this.$store.state.url;
           
-          const response = await get(url + this.prefix);
+        const response = await get(url + this.prefix);
 
-          if (response.status === 200) {
+        if (response.status === 200) {
             
-            this.notifications = response.data.data; 
-            this.itemsCount = this.notifications.length;
-
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
+          this.notifications = response.data.data; 
+          this.itemsCount = this.notifications.length;
 
         }
 
-      },
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      }
+
     },
-  }
+  },
+};
 
 </script>
 

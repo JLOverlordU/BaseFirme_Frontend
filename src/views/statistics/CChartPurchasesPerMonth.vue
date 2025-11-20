@@ -9,28 +9,28 @@
 
 <script>
   
-  import { CChartBar } from '@coreui/vue-chartjs'
+import { CChartBar } from "@coreui/vue-chartjs";
 
-  export default {
-    name: 'CChartPurchasesPerMonth',
-    props: {
-      purchases_per_month: Array,
+export default {
+  name: "CChartPurchasesPerMonth",
+  props: {
+    purchases_per_month: Array,
+  },
+  components: { CChartBar },
+  computed: {
+    getDataPurchases () {
+      return [
+        {
+          label: "Compras",
+          backgroundColor: "#f87979",
+          data: this.purchases_per_month
+        }
+      ];
     },
-    components: { CChartBar },
-    computed: {
-      getDataPurchases () {
-        return [
-          {
-            label: 'Compras',
-            backgroundColor: '#f87979',
-            data: this.purchases_per_month
-          }
-        ]
-      },
-      months() {
-        return ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-      }
-    },
-  }
+    months() {
+      return ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    }
+  },
+};
 
 </script>

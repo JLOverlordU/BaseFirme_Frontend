@@ -14,10 +14,10 @@
 
 <script>
 
-import TableFormula from './TableFormula.vue'
+import TableFormula from "./TableFormula.vue";
 
 export default {
-  name: 'TableFormulas',
+  name: "TableFormulas",
   components: { TableFormula },
-}
+};
 </script>

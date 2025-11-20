@@ -90,10 +90,10 @@
 
 <script>
 
-import {list} from '../../assets/js/methods/functions.js'
+import {list} from "../../assets/js/methods/functions.js";
 
 export default {
-  name: 'ModalProducts',
+  name: "ModalProducts",
   props: {
     isVisible: {
       type: Boolean,
@@ -117,21 +117,21 @@ export default {
       type: Array,
       default() {
         return [
-            { key: "index", label: "#" },
-            { key: "cod_product", label: "Código" },
-            { key: "name", label: "Nombre" },
-            //{ key: "process", label: "Proceso" },
-            // { key: 'presentation', label: 'Presentación' },
-            { key: "price", label: "Precio de venta (S/.)" },
-            { key: "price_purchase", label: "Precio de compra (S/.)" },
-            { key: 'stock', label: 'Stock' },
-            // { key: 'stock_converted', label: 'Stock (SACO)' },
-            { key: "unit_measure", label: "UM" },
-            {
-                key: "buttonSelect",
-                label: "Seleccionar",
-                _style: "min-width:20%;",
-            },
+          { key: "index", label: "#" },
+          { key: "cod_product", label: "Código" },
+          { key: "name", label: "Nombre" },
+          //{ key: "process", label: "Proceso" },
+          // { key: 'presentation', label: 'Presentación' },
+          { key: "price", label: "Precio de venta (S/.)" },
+          { key: "price_purchase", label: "Precio de compra (S/.)" },
+          { key: "stock", label: "Stock" },
+          // { key: 'stock_converted', label: 'Stock (SACO)' },
+          { key: "unit_measure", label: "UM" },
+          {
+            key: "buttonSelect",
+            label: "Seleccionar",
+            _style: "min-width:20%;",
+          },
         ];
       },
     },
@@ -203,7 +203,7 @@ export default {
         name          : "",
         unit_measure  : "",
         ids_products  : "",
-      }
+      };
     },
     searchProducts() {
       this.getProducts();

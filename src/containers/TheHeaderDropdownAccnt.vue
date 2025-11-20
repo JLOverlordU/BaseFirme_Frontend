@@ -37,75 +37,75 @@
 
 <script>
 
-  import {show} from '../assets/js/methods/functions.js'
+import {show} from "../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TheHeaderDropdownAccnt',
-    data () {
-      return { 
-        prefix: "logout",
-        prefix_user: "get_user",
-        itemsCount: 42,
-        user: {
-          id: '',
-          name: ''
-        }
+export default {
+  name: "TheHeaderDropdownAccnt",
+  data () {
+    return { 
+      prefix: "logout",
+      prefix_user: "get_user",
+      itemsCount: 42,
+      user: {
+        id: "",
+        name: ""
       }
+    };
+  },
+  mounted() {
+    this.getUser();
+  },
+  methods: {
+    async home(){
+      this.$router.push({ 
+        name: "Inicio", 
+      });
     },
-    mounted() {
-      this.getUser();
-    },
-    methods: {
-      async home(){
-        this.$router.push({ 
-          name: 'Inicio', 
-        });
-      },
-      async logout(){
+    async logout(){
                         
-        const url = this.$store.state.url;
-        const response = await show(url + this.prefix);
+      const url = this.$store.state.url;
+      const response = await show(url + this.prefix);
                             
-        if (response.status === 200) {
+      if (response.status === 200) {
                       
-          let data = response?.data;
+        let data = response?.data;
 
-          if(data.flag){
+        if(data.flag){
 
-            sessionStorage.clear();
+          sessionStorage.clear();
 
-            this.$router.push({ 
-              name: 'Login', 
-            });
-
-          }
+          this.$router.push({ 
+            name: "Login", 
+          });
 
         }
 
-      },
-      async getUser(){
+      }
 
-        this.user.id = sessionStorage.getItem('id');
-        this.user.name = sessionStorage.getItem('name') || 'Invitado';
+    },
+    async getUser(){
 
-        // const url = this.$store.state.url;
-        // const response = await getUser(url + this.prefix_user);
+      this.user.id = sessionStorage.getItem("id");
+      this.user.name = sessionStorage.getItem("name") || "Invitado";
 
-        // if (response.status === 200) {
+      // const url = this.$store.state.url;
+      // const response = await getUser(url + this.prefix_user);
+
+      // if (response.status === 200) {
                       
-        //   let data = response?.data;
+      //   let data = response?.data;
 
-        //   if(data.flag){
+      //   if(data.flag){
             
-        //     console.log(data);
+      //     console.log(data);
             
-        //   }
+      //   }
 
-        // }
+      // }
 
-      },
-    }
+    },
   }
+};
 </script>
 
 <style scoped>

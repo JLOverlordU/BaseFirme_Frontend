@@ -274,172 +274,172 @@
 
 <script>
 
-  import CTableProductsSelected from './TableListProductsSelected.vue'
-  import CTableProductsNucleoSelected from './TableListProductsNucleoSelected.vue'
-  import ModalFormula from './ModalFormula.vue';
-  import Swal from "sweetalert2"
-  import {list, save} from '../../../assets/js/methods/functions.js'
+import CTableProductsSelected from "./TableListProductsSelected.vue";
+import CTableProductsNucleoSelected from "./TableListProductsNucleoSelected.vue";
+import ModalFormula from "./ModalFormula.vue";
+import Swal from "sweetalert2";
+import {list, save} from "../../../assets/js/methods/functions.js";
 
-  import 'vue-select/dist/vue-select.css'
-  import 'vue-multiselect/dist/vue-multiselect.min.css'
+import "vue-select/dist/vue-select.css";
+import "vue-multiselect/dist/vue-multiselect.min.css";
   
-  export default {
-    name: 'AddFormula',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'code', label: 'Código' },
-            { key: 'name', label: 'Nombre' },
-            { key: 'process', label: 'Proceso' },
-            { key: 'price', label: 'Precio' },
-            { key: 'stock', label: 'Stock' },
-            { key: 'buttonSelect', label: 'Seleccionar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    data() {
-      return {
-        prefix: "formula",
-        prefix_units_measure: "units_measure",
-        units_measure: [],
-        title: "Nueva Fórmula",
-        btnSaveFormula: "Guardar",
-        formula: {
-          id                  : "",
-          name                : "",
-          unit_measure        : "Kg",
-          total_macros        : 0,
-          total_nucleo        : 0,
-          total               : 0,
-          cost_macros         : 0,
-          cost_nucleo         : 0,
-          cost_total          : 0,
-          details             : [],
-          details_nucleos     : [],
-          details_combinated  : [],
-          price               : "",
-          price_purchase      : "",
-          equivalent          : "",
-          stock               : "",
-          converted_stock     : "",
-        },
-        detail: null,
-        type: "insumo",
-        flagModalDetail: false,
-        flagModalProducts: false,
-        loading: true,
-        loadingSaleDetails: false,
-        loadingButtonsActions: true,
-        loadingUnitsMeasure: true,
+export default {
+  name: "AddFormula",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "code", label: "Código" },
+          { key: "name", label: "Nombre" },
+          { key: "process", label: "Proceso" },
+          { key: "price", label: "Precio" },
+          { key: "stock", label: "Stock" },
+          { key: "buttonSelect", label: "Seleccionar", _style:"min-width:20%;" },
+        ];
       }
     },
-    async mounted() {
-
-      this.loading = true;
-
-      // await this.getUnitsMeasure();
-      await this.getFormula();
-      await this.getTotalGeneralMacros();
-      await this.getTotalGeneralNucleos();
-      await this.getTotalGeneral();
-
-      this.loading = false;
-
-    },
-    components: {
-      ModalFormula,
-      CTableProductsSelected,
-      CTableProductsNucleoSelected
-    },
-    methods: {
-      async getFormula(){
-
-        const data = this.$route.query.data;
-
-        if (data && typeof data === 'string' && data.trim() !== '') {
-
-          const item = JSON.parse(data);
-
-          this.formula.id = item.id;
-          this.formula.name = item.name;
-          // this.formula.unit_measure = item.unit_measure_id;
-          this.formula.total_macros = item.total_macros;
-          this.formula.total_nucleo = item.total_nucleo;
-          this.formula.total = item.total;
-          this.formula.cost_macros = item.cost_macros;
-          this.formula.cost_nucleo = item.cost_nucleo;
-          this.formula.cost_total = item.cost_total;
-          this.formula.details = item.details;
-          this.formula.details_nucleos = item.details_nucleos;
-
-          this.formula.price = item.product.price ?? "";
-          this.formula.price_purchase = item.product.price_purchase ?? "";
-          this.formula.equivalent = item.product.equivalent ?? "";
-          this.formula.stock = item.product.stock ?? "";
-          this.formula.converted_stock = item.product.converted_stock ?? "";
-
-          this.title = "Modificar Fórmula";
-          this.btnSaveFormula = "Modificar";
-
-        }
-
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  data() {
+    return {
+      prefix: "formula",
+      prefix_units_measure: "units_measure",
+      units_measure: [],
+      title: "Nueva Fórmula",
+      btnSaveFormula: "Guardar",
+      formula: {
+        id                  : "",
+        name                : "",
+        unit_measure        : "Kg",
+        total_macros        : 0,
+        total_nucleo        : 0,
+        total               : 0,
+        cost_macros         : 0,
+        cost_nucleo         : 0,
+        cost_total          : 0,
+        details             : [],
+        details_nucleos     : [],
+        details_combinated  : [],
+        price               : "",
+        price_purchase      : "",
+        equivalent          : "",
+        stock               : "",
+        converted_stock     : "",
       },
-      async saveFormula(){
+      detail: null,
+      type: "insumo",
+      flagModalDetail: false,
+      flagModalProducts: false,
+      loading: true,
+      loadingSaleDetails: false,
+      loadingButtonsActions: true,
+      loadingUnitsMeasure: true,
+    };
+  },
+  async mounted() {
 
-        this.loadingButtonsActions = false;
+    this.loading = true;
 
-        try {
+    // await this.getUnitsMeasure();
+    await this.getFormula();
+    await this.getTotalGeneralMacros();
+    await this.getTotalGeneralNucleos();
+    await this.getTotalGeneral();
+
+    this.loading = false;
+
+  },
+  components: {
+    ModalFormula,
+    CTableProductsSelected,
+    CTableProductsNucleoSelected
+  },
+  methods: {
+    async getFormula(){
+
+      const data = this.$route.query.data;
+
+      if (data && typeof data === "string" && data.trim() !== "") {
+
+        const item = JSON.parse(data);
+
+        this.formula.id = item.id;
+        this.formula.name = item.name;
+        // this.formula.unit_measure = item.unit_measure_id;
+        this.formula.total_macros = item.total_macros;
+        this.formula.total_nucleo = item.total_nucleo;
+        this.formula.total = item.total;
+        this.formula.cost_macros = item.cost_macros;
+        this.formula.cost_nucleo = item.cost_nucleo;
+        this.formula.cost_total = item.cost_total;
+        this.formula.details = item.details;
+        this.formula.details_nucleos = item.details_nucleos;
+
+        this.formula.price = item.product.price ?? "";
+        this.formula.price_purchase = item.product.price_purchase ?? "";
+        this.formula.equivalent = item.product.equivalent ?? "";
+        this.formula.stock = item.product.stock ?? "";
+        this.formula.converted_stock = item.product.converted_stock ?? "";
+
+        this.title = "Modificar Fórmula";
+        this.btnSaveFormula = "Modificar";
+
+      }
+
+    },
+    async saveFormula(){
+
+      this.loadingButtonsActions = false;
+
+      try {
           
-          const url = this.$store.state.url;
-          const data = this.getSetData(this.formula);
-          const response = await save(url + this.prefix, data, this.formula.id);
+        const url = this.$store.state.url;
+        const data = this.getSetData(this.formula);
+        const response = await save(url + this.prefix, data, this.formula.id);
           
-          if (response.status === 200) {
+        if (response.status === 200) {
             
-            if(response.data.flag){
+          if(response.data.flag){
 
-              Swal.fire("Alerta", response.data.message, "success");
+            Swal.fire("Alerta", response.data.message, "success");
               
-              this.$router.push({ 
-                name: 'Listado Fórmulas', 
-              });
+            this.$router.push({ 
+              name: "Listado Fórmulas", 
+            });
 
-            } else {
-              
-              Swal.fire("Alerta", response.data.message, "warning");
-              
-            }
-            
-
-          }
-
-        } catch (errors) {
-          
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
           } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+              
+            Swal.fire("Alerta", response.data.message, "warning");
+              
           }
-
-        } finally {
-
-          this.loadingButtonsActions = true;
+            
 
         }
 
-      },
-      async getUnitsMeasure(){
+      } catch (errors) {
+          
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loadingButtonsActions = true;
+
+      }
+
+    },
+    async getUnitsMeasure(){
 
       this.loadingUnitsMeasure = true;
 
@@ -472,245 +472,245 @@
 
       }
 
-      },
-      openModalDetail(type, modo = "NUEVO"){
+    },
+    openModalDetail(type, modo = "NUEVO"){
 
-        if(modo == "NUEVO"){
-          this.detail = null;
-        }
+      if(modo == "NUEVO"){
+        this.detail = null;
+      }
 
-        this.flagModalDetail    = true;
-        this.type               = type;
-        this.formula.details_combinated =  [...this.formula.details, ...this.formula.details_nucleos];
-      },
-      closeModalDetail(){        
-        this.flagModalDetail = false;
-      },
-      getDetail(data){
+      this.flagModalDetail    = true;
+      this.type               = type;
+      this.formula.details_combinated =  [...this.formula.details, ...this.formula.details_nucleos];
+    },
+    closeModalDetail(){        
+      this.flagModalDetail = false;
+    },
+    getDetail(data){
 
-        console.log(data.index);
-        const newDetail = {
-          "id": data.id,
-          "index": data.index,
-          "product": {
-            "id": data.product.id,
-            "name": data.product.name,
-            "stock": data.product.stock,
-            "unit_measure": data.product.unit_measure
-          },
-          price: data.price,
-          amount: data.amount,
-          cost: data.cost,
-          type: data.type
-        };
+      console.log(data.index);
+      const newDetail = {
+        "id": data.id,
+        "index": data.index,
+        "product": {
+          "id": data.product.id,
+          "name": data.product.name,
+          "stock": data.product.stock,
+          "unit_measure": data.product.unit_measure
+        },
+        price: data.price,
+        amount: data.amount,
+        cost: data.cost,
+        type: data.type
+      };
 
-        if(newDetail.type == "insumo"){
+      if(newDetail.type == "insumo"){
 
-          if(newDetail.index == -1){
-            this.formula.details.push(newDetail);
-          } else {
-
-            const indexToReplace = (this.formula.details).findIndex(detail => detail.index === newDetail.index);
-
-            if (indexToReplace !== -1) {
-              this.formula.details.splice(indexToReplace, 1, newDetail);
-            }
-
-          }
-
+        if(newDetail.index == -1){
+          this.formula.details.push(newDetail);
         } else {
 
-          if(newDetail.index == -1){
-            this.formula.details_nucleos.push(newDetail);
-          } else {
+          const indexToReplace = (this.formula.details).findIndex(detail => detail.index === newDetail.index);
 
-            const indexToReplace = (this.formula.details_nucleos).findIndex(detail => detail.index === newDetail.index);
-
-            if (indexToReplace !== -1) {
-              this.formula.details_nucleos.splice(indexToReplace, 1, newDetail);
-            }
-
+          if (indexToReplace !== -1) {
+            this.formula.details.splice(indexToReplace, 1, newDetail);
           }
 
         }
 
-        this.getTotalGeneralMacros();
-        this.getTotalGeneralNucleos();
-        this.getTotalGeneral();
+      } else {
 
-      },
-      async getTotal(){
-        this.getTotalGeneralMacros();
-        this.getTotalGeneralNucleos();
-        this.getTotalGeneral();
-      },
-      async getDataDetail(item){
-        this.detail = item;
-        this.openModalDetail(item.type, "EDITAR");
-      },
-      async getTotalGeneralMacros() {
-
-        let total = 0;
-        let cost = 0;
-
-        for (let index = 0; index < this.formula.details.length; index++) {
-          total += parseFloat(this.formula.details[index].amount);
-          cost += parseFloat(this.formula.details[index].cost);
-        }
-
-        this.formula.total_macros = total;
-        this.formula.cost_macros = cost;
-
-        return total;
-
-      },
-      async getTotalGeneralNucleos() {
-
-        let total = 0;
-        let cost = 0;
-
-        for (let index = 0; index < this.formula.details_nucleos.length; index++) {
-          total += parseFloat(this.formula.details_nucleos[index].amount);
-          cost += parseFloat(this.formula.details_nucleos[index].cost);
-        }
-
-        this.formula.total_nucleo = total;
-        this.formula.cost_nucleo = cost;
-
-        return total;
-
-      },
-      async getTotalGeneral() {
-
-        let total = 0;
-        let cost = 0;
-
-        total = this.formula.total_macros + this.formula.total_nucleo;
-        cost = this.formula.cost_macros + this.formula.cost_nucleo;
-
-        this.formula.total = total;
-        this.formula.cost_total = cost;
-
-        return total;
-
-      },
-      updateFromEquivalentStock() {
-
-        const equivalent = parseFloat(this.formula.equivalent);
-        const converted_stock = parseFloat(this.formula.converted_stock);
-
-        if (!isNaN(equivalent) && equivalent > 0 && !isNaN(converted_stock) && converted_stock > 0) {
-          this.formula.stock = converted_stock / equivalent;
+        if(newDetail.index == -1){
+          this.formula.details_nucleos.push(newDetail);
         } else {
-          this.formula.stock = 0;
+
+          const indexToReplace = (this.formula.details_nucleos).findIndex(detail => detail.index === newDetail.index);
+
+          if (indexToReplace !== -1) {
+            this.formula.details_nucleos.splice(indexToReplace, 1, newDetail);
+          }
+
         }
 
-      },
-      updateFromStockUM1() {
+      }
 
-        const equivalent = parseFloat(this.formula.equivalent);
-        const stock = parseFloat(this.formula.stock);
+      this.getTotalGeneralMacros();
+      this.getTotalGeneralNucleos();
+      this.getTotalGeneral();
 
-        if (!isNaN(equivalent) && equivalent > 0 && !isNaN(stock) && stock > 0) {
-          this.formula.converted_stock = equivalent * stock;
-        } else {
-          this.formula.converted_stock = 0;
-        }
+    },
+    async getTotal(){
+      this.getTotalGeneralMacros();
+      this.getTotalGeneralNucleos();
+      this.getTotalGeneral();
+    },
+    async getDataDetail(item){
+      this.detail = item;
+      this.openModalDetail(item.type, "EDITAR");
+    },
+    async getTotalGeneralMacros() {
 
-      },
-      getSetData(data){
+      let total = 0;
+      let cost = 0;
 
-        let formData = new FormData();
-        let id = -1;
+      for (let index = 0; index < this.formula.details.length; index++) {
+        total += parseFloat(this.formula.details[index].amount);
+        cost += parseFloat(this.formula.details[index].cost);
+      }
 
-        formData.append('name', data.name);
-        // formData.append('unit_measure_id', data.unit_measure);
-        formData.append('total_macros', data.total_macros);
-        formData.append('total_nucleo', data.total_nucleo);
-        formData.append('total', data.total);
-        formData.append('cost_macros', data.cost_macros);
-        formData.append('cost_nucleo', data.cost_nucleo);
-        formData.append('cost_total', data.cost_total);
-        formData.append('price', data.price);
-        formData.append('price_purchase', data.price_purchase);
-        formData.append('equivalent', data.equivalent);
-        formData.append('stock', data.stock);
-        formData.append('converted_stock', data.converted_stock);
+      this.formula.total_macros = total;
+      this.formula.cost_macros = cost;
 
-        (data.details).forEach(function(detail, index) {
-            id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+      return total;
 
-            formData.append(`details[${index}][id]`, id);
-            formData.append(`details[${index}][product_id]`, detail.product.id);
-            formData.append(`details[${index}][price]`, detail.price);
-            formData.append(`details[${index}][amount]`, detail.amount);
-            formData.append(`details[${index}][cost]`, detail.cost);
-        });
+    },
+    async getTotalGeneralNucleos() {
 
-        (data.details_nucleos).forEach(function(detail, index) {
-            id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+      let total = 0;
+      let cost = 0;
 
-            formData.append(`details_nucleos[${index}][id]`, id);
-            formData.append(`details_nucleos[${index}][product_id]`, detail.product.id);
-            formData.append(`details_nucleos[${index}][price]`, detail.price);
-            formData.append(`details_nucleos[${index}][amount]`, detail.amount);
-            formData.append(`details_nucleos[${index}][cost]`, detail.cost);
-        });
+      for (let index = 0; index < this.formula.details_nucleos.length; index++) {
+        total += parseFloat(this.formula.details_nucleos[index].amount);
+        cost += parseFloat(this.formula.details_nucleos[index].cost);
+      }
 
-        return formData;
+      this.formula.total_nucleo = total;
+      this.formula.cost_nucleo = cost;
 
-      },
-      preventInvalidDecimal(event) {
-        const key = event.key;
-        const value = event.target.value;
-        const selectionStart = event.target.selectionStart;
-        const selectionEnd = event.target.selectionEnd;
+      return total;
 
-        // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
-        const isReplacing = selectionStart !== selectionEnd;
+    },
+    async getTotalGeneral() {
 
-        // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
-        if (!/^[0-9]$/.test(key) && key !== '.' && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(key)) {
-          event.preventDefault();
-          return;
-        }
+      let total = 0;
+      let cost = 0;
 
-        // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
-        if (['Backspace', 'Delete'].includes(key)) {
-          return; // Permite borrar sin restricciones
-        }
+      total = this.formula.total_macros + this.formula.total_nucleo;
+      cost = this.formula.cost_macros + this.formula.cost_nucleo;
 
-        // Asegura que solo se permita un punto decimal
-        if (key === '.' && value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      this.formula.total = total;
+      this.formula.cost_total = cost;
 
-        // Si estamos reemplazando texto, permite que se complete la sobrescritura
-        if (isReplacing) {
-          return;
-        }
+      return total;
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
-        const [integerPart, decimalPart] = value.split('.');
+    },
+    updateFromEquivalentStock() {
 
-        // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
-        if (!integerPart && key !== '.') {
-          return;
-        }
+      const equivalent = parseFloat(this.formula.equivalent);
+      const converted_stock = parseFloat(this.formula.converted_stock);
 
-        // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
-        if (integerPart && integerPart.length >= 8 && key !== '.' && !value.includes('.')) {
-          event.preventDefault();
-          return;
-        }
+      if (!isNaN(equivalent) && equivalent > 0 && !isNaN(converted_stock) && converted_stock > 0) {
+        this.formula.stock = converted_stock / equivalent;
+      } else {
+        this.formula.stock = 0;
+      }
 
-        // Limitar la parte decimal a 4 dígitos
-        if (decimalPart && decimalPart.length >= 4 && value.includes('.')) {
-          event.preventDefault();
-        }
-      },
-    }
+    },
+    updateFromStockUM1() {
+
+      const equivalent = parseFloat(this.formula.equivalent);
+      const stock = parseFloat(this.formula.stock);
+
+      if (!isNaN(equivalent) && equivalent > 0 && !isNaN(stock) && stock > 0) {
+        this.formula.converted_stock = equivalent * stock;
+      } else {
+        this.formula.converted_stock = 0;
+      }
+
+    },
+    getSetData(data){
+
+      let formData = new FormData();
+      let id = -1;
+
+      formData.append("name", data.name);
+      // formData.append('unit_measure_id', data.unit_measure);
+      formData.append("total_macros", data.total_macros);
+      formData.append("total_nucleo", data.total_nucleo);
+      formData.append("total", data.total);
+      formData.append("cost_macros", data.cost_macros);
+      formData.append("cost_nucleo", data.cost_nucleo);
+      formData.append("cost_total", data.cost_total);
+      formData.append("price", data.price);
+      formData.append("price_purchase", data.price_purchase);
+      formData.append("equivalent", data.equivalent);
+      formData.append("stock", data.stock);
+      formData.append("converted_stock", data.converted_stock);
+
+      (data.details).forEach(function(detail, index) {
+        id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+
+        formData.append(`details[${index}][id]`, id);
+        formData.append(`details[${index}][product_id]`, detail.product.id);
+        formData.append(`details[${index}][price]`, detail.price);
+        formData.append(`details[${index}][amount]`, detail.amount);
+        formData.append(`details[${index}][cost]`, detail.cost);
+      });
+
+      (data.details_nucleos).forEach(function(detail, index) {
+        id = (detail.id != null && detail.id != undefined && detail.id != "") ? detail.id : -1;
+
+        formData.append(`details_nucleos[${index}][id]`, id);
+        formData.append(`details_nucleos[${index}][product_id]`, detail.product.id);
+        formData.append(`details_nucleos[${index}][price]`, detail.price);
+        formData.append(`details_nucleos[${index}][amount]`, detail.amount);
+        formData.append(`details_nucleos[${index}][cost]`, detail.cost);
+      });
+
+      return formData;
+
+    },
+    preventInvalidDecimal(event) {
+      const key = event.key;
+      const value = event.target.value;
+      const selectionStart = event.target.selectionStart;
+      const selectionEnd = event.target.selectionEnd;
+
+      // Permitir sobrescribir el contenido seleccionado sin bloquear por largo de la cadena
+      const isReplacing = selectionStart !== selectionEnd;
+
+      // Permite solo números, un solo punto decimal, y teclas útiles como Retroceso, Suprimir, etc.
+      if (!/^[0-9]$/.test(key) && key !== "." && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
+
+      // Permitir borrar (Backspace, Delete) y escribir nuevamente en la parte entera
+      if (["Backspace", "Delete"].includes(key)) {
+        return; // Permite borrar sin restricciones
+      }
+
+      // Asegura que solo se permita un punto decimal
+      if (key === "." && value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
+
+      // Si estamos reemplazando texto, permite que se complete la sobrescritura
+      if (isReplacing) {
+        return;
+      }
+
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal
+      const [integerPart, decimalPart] = value.split(".");
+
+      // Si no hay parte entera, permite seguir escribiendo (por si se borró todo)
+      if (!integerPart && key !== ".") {
+        return;
+      }
+
+      // Limitar la parte entera a 8 dígitos si ya hay un punto decimal o aún no se ha ingresado
+      if (integerPart && integerPart.length >= 8 && key !== "." && !value.includes(".")) {
+        event.preventDefault();
+        return;
+      }
+
+      // Limitar la parte decimal a 4 dígitos
+      if (decimalPart && decimalPart.length >= 4 && value.includes(".")) {
+        event.preventDefault();
+      }
+    },
   }
+};
 
 </script>

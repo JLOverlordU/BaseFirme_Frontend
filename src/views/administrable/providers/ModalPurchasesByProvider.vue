@@ -144,10 +144,10 @@
 <script>
 
 import CModalDepositsPurchase from "./ModalDepositsPurchase.vue";
-import {list} from '../../../assets/js/methods/functions.js'
+import {list} from "../../../assets/js/methods/functions.js";
 
 export default {
-  name: 'ModalPurchasesByProvider',
+  name: "ModalPurchasesByProvider",
   components: {
     CModalDepositsPurchase,
   },
@@ -165,14 +165,14 @@ export default {
       type: Array,
       default() {
         return [
-            { key: "index", label: "#" },
-            { key: "consecutive", label: "Compra" },
-            { key: "date", label: "Día" },
-            { key: "subtotal", label: "Total Compra" },
-            { key: "deposit", label: "Depositó" },
-            { key: "debt", label: "Deuda" },
-            { key: "buttonSelect", label: "Pagar", _style: "min-width:20%;" },
-            { key: "buttonView", label: "Ver", _style: "min-width:20%;" },
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "Compra" },
+          { key: "date", label: "Día" },
+          { key: "subtotal", label: "Total Compra" },
+          { key: "deposit", label: "Depositó" },
+          { key: "debt", label: "Deuda" },
+          { key: "buttonSelect", label: "Pagar", _style: "min-width:20%;" },
+          { key: "buttonView", label: "Ver", _style: "min-width:20%;" },
         ];
       },
     },
@@ -182,7 +182,7 @@ export default {
       prefix: "purchases_by_provider",
       purchase: null,
       purchases: [],
-      types: ['ambos', 'pendientes', 'finalizadas'],
+      types: ["ambos", "pendientes", "finalizadas"],
       filters: {
         consecutive: "",
         provider: 0,
@@ -261,11 +261,11 @@ export default {
     sendViewPurchase(item) {
 
       const routeData = this.$router.resolve({ 
-        name: 'Detalle compra', 
+        name: "Detalle compra", 
         query: { data: JSON.stringify(item) }
       });
 
-      window.open(routeData.href, '_blank');
+      window.open(routeData.href, "_blank");
 
     },
     formatFloat(value) {

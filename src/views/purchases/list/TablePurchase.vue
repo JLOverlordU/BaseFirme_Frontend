@@ -178,116 +178,116 @@
 
 <script>
 
-  import Swal from "sweetalert2"
-  import {list, report, ticket, destroy} from '../../../assets/js/methods/functions.js'
+import Swal from "sweetalert2";
+import {list, report, ticket, destroy} from "../../../assets/js/methods/functions.js";
 
-  export default {
-    name: 'TablePurchase',
-    props: {
-      items: Array,
-      fields: {
-        type: Array,
-        default () {
-          return [
-            { key: 'index', label: '#' },
-            { key: 'consecutive', label: 'Número de Compra' },
-            { key: 'date', label: 'Día de creación' },
-            { key: 'provider', label: 'Proveedor' },
-            { key: 'user_creator', label: 'Usuario Creador' },
-            { key: 'type', label: 'Modo' },
-            { key: 'boleta_factura', label: 'Tipo' },
-            { key: 'subtotal', label: 'Subtotal (S/.)' },
-            { key: 'deposit', label: 'Depositó (S/.)' },
-            // { key: 'consumption', label: 'Consumo' },
-            { key: 'total', label: 'Total (S/.)' },
-            { key: 'buttonTicket', label: 'Ticket', _style:'min-width:20%;' },
-            { key: 'buttonView', label: 'Ver', _style:'min-width:20%;' },
-            { key: 'buttonEdit', label: 'Editar', _style:'min-width:20%;' },
-            { key: 'buttonDelete', label: 'Eliminar', _style:'min-width:20%;' },
-          ]
-        }
-      },
-      hover: Boolean,
-      striped: Boolean,
-      border: Boolean,
-      small: Boolean,
-      fixed: Boolean,
-      dark: Boolean
-    },
-    mounted() {
-      this.getPurchases();
-    },
-    data () {
-      return {
-        prefix_list: "purchases",
-        prefix: "purchase",
-        purchases: [],
-        loading: true,
-        types: ['ambas', 'contado', 'credito'],
-        totalSubtotal: 0,
-        totalFinal: 0,
-        filters: {
-          consecutive : "",
-          date        : "",
-          type        : "ambas",
-          start_date  : "",
-          end_date    : "",
-          provider    : "",
-          user        : "",
-        },
+export default {
+  name: "TablePurchase",
+  props: {
+    items: Array,
+    fields: {
+      type: Array,
+      default () {
+        return [
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "Número de Compra" },
+          { key: "date", label: "Día de creación" },
+          { key: "provider", label: "Proveedor" },
+          { key: "user_creator", label: "Usuario Creador" },
+          { key: "type", label: "Modo" },
+          { key: "boleta_factura", label: "Tipo" },
+          { key: "subtotal", label: "Subtotal (S/.)" },
+          { key: "deposit", label: "Depositó (S/.)" },
+          // { key: 'consumption', label: 'Consumo' },
+          { key: "total", label: "Total (S/.)" },
+          { key: "buttonTicket", label: "Ticket", _style:"min-width:20%;" },
+          { key: "buttonView", label: "Ver", _style:"min-width:20%;" },
+          { key: "buttonEdit", label: "Editar", _style:"min-width:20%;" },
+          { key: "buttonDelete", label: "Eliminar", _style:"min-width:20%;" },
+        ];
       }
     },
-    watch: {
-      purchases: {
-        immediate: true,
-        handler(newPurchases) {
-          this.totalSubtotal = newPurchases.reduce((sum, purchase) => sum + parseFloat(purchase.subtotal || 0), 0);
-          this.totalFinal = newPurchases.reduce((sum, purchase) => sum + parseFloat(purchase.total || 0), 0);
-        }
-      }
-    },
-    methods: {
-      async getPurchases(){
-        
-        this.loading = true;
-
-        try {
-          
-          const url = this.$store.state.url;
-          const response = await list(url + this.prefix_list, this.filters);
-
-          if (response.status === 200) {                        
-            this.purchases = response.data.data;
-          }
-
-        } catch (errors) {
-
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-          
-          this.loading = false;
-        
-        }
-
+    hover: Boolean,
+    striped: Boolean,
+    border: Boolean,
+    small: Boolean,
+    fixed: Boolean,
+    dark: Boolean
+  },
+  mounted() {
+    this.getPurchases();
+  },
+  data () {
+    return {
+      prefix_list: "purchases",
+      prefix: "purchase",
+      purchases: [],
+      loading: true,
+      types: ["ambas", "contado", "credito"],
+      totalSubtotal: 0,
+      totalFinal: 0,
+      filters: {
+        consecutive : "",
+        date        : "",
+        type        : "ambas",
+        start_date  : "",
+        end_date    : "",
+        provider    : "",
+        user        : "",
       },
-      async deletePurchase(id, consecutive){
+    };
+  },
+  watch: {
+    purchases: {
+      immediate: true,
+      handler(newPurchases) {
+        this.totalSubtotal = newPurchases.reduce((sum, purchase) => sum + parseFloat(purchase.subtotal || 0), 0);
+        this.totalFinal = newPurchases.reduce((sum, purchase) => sum + parseFloat(purchase.total || 0), 0);
+      }
+    }
+  },
+  methods: {
+    async getPurchases(){
+        
+      this.loading = true;
 
-        let el = this;
+      try {
+          
+        const url = this.$store.state.url;
+        const response = await list(url + this.prefix_list, this.filters);
 
-        Swal.fire({
-          title: "¿Está seguro?",
-          html: `Se eliminará la compra '${consecutive}'.`,
-          icon: "warning",
-          confirmButtonText: "Sí, eliminar",
-          closeOnConfirm: false,
-          showCancelButton: true,
-          cancelButtonText: "Cancelar"
-        })
+        if (response.status === 200) {                        
+          this.purchases = response.data.data;
+        }
+
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+          
+        this.loading = false;
+        
+      }
+
+    },
+    async deletePurchase(id, consecutive){
+
+      let el = this;
+
+      Swal.fire({
+        title: "¿Está seguro?",
+        html: `Se eliminará la compra '${consecutive}'.`,
+        icon: "warning",
+        confirmButtonText: "Sí, eliminar",
+        closeOnConfirm: false,
+        showCancelButton: true,
+        cancelButtonText: "Cancelar"
+      })
         .then(async function(result) {
 
           if(result.value) {
@@ -318,92 +318,92 @@
 
         });
 
-      },
-      async downloadExcelPurchase() {
+    },
+    async downloadExcelPurchase() {
 
-        this.loading = true;
+      this.loading = true;
 
-        try {
+      try {
 
-          const url = this.$store.state.url;
-          await report(url+"purchases_excel", this.filters, "reporte compras.xlsx");
+        const url = this.$store.state.url;
+        await report(url+"purchases_excel", this.filters, "reporte compras.xlsx");
 
-        } catch (errors) {
+      } catch (errors) {
           
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
-
-        } finally {
-
-          this.loading = false;        
-
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
         }
 
-      },
-      async downloadReport(method, type, extention, purchase) {
+      } finally {
 
-        this.loading = true;
+        this.loading = false;        
 
-        try {
+      }
 
-          const url = this.$store.state.url;
+    },
+    async downloadReport(method, type, extention, purchase) {
 
-          if(type == "excel"){
-            await report(url+method, purchase, "reporte N°"+purchase.consecutive+extention);
-          } else {
-            await ticket(url+method, purchase, "reporte N°"+purchase.consecutive+extention);
-          }
+      this.loading = true;
 
-        } catch (errors) {
+      try {
 
-          if (errors.length > 0) {
-            Swal.fire("Alerta", errors[0], "warning");
-          } else {
-            Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
-          }
+        const url = this.$store.state.url;
 
-        } finally {
-
-          this.loading = false;        
-
+        if(type == "excel"){
+          await report(url+method, purchase, "reporte N°"+purchase.consecutive+extention);
+        } else {
+          await ticket(url+method, purchase, "reporte N°"+purchase.consecutive+extention);
         }
 
-      },
-      cleanFilters() {
-        this.filters = {
-          consecutive : "",
-          date        : "",
-          type        : "ambas",
-          start_date  : "",
-          end_date    : "",
-          provider    : "",
-          user        : "",
-        };
-      },
-      sendEditPurchase(item) {
-        this.$router.push({ 
-          name: 'Agregar compra', 
-          query: { data: JSON.stringify(item) }
-        });
-      },
-      sendViewPurchase(item) {
-        this.$router.push({ 
-          name: 'Detalle compra', 
-          query: { data: JSON.stringify(item) }
-        });
-      },
-      validateDates() {
-        if (this.filters.start_date && this.filters.end_date) {
-          if (this.filters.end_date < this.filters.start_date) {
-            Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
-            this.filters.end_date = '';
-          }
+      } catch (errors) {
+
+        if (errors.length > 0) {
+          Swal.fire("Alerta", errors[0], "warning");
+        } else {
+          Swal.fire("Alerta", "Ocurrió un error desconocido", "error");
+        }
+
+      } finally {
+
+        this.loading = false;        
+
+      }
+
+    },
+    cleanFilters() {
+      this.filters = {
+        consecutive : "",
+        date        : "",
+        type        : "ambas",
+        start_date  : "",
+        end_date    : "",
+        provider    : "",
+        user        : "",
+      };
+    },
+    sendEditPurchase(item) {
+      this.$router.push({ 
+        name: "Agregar compra", 
+        query: { data: JSON.stringify(item) }
+      });
+    },
+    sendViewPurchase(item) {
+      this.$router.push({ 
+        name: "Detalle compra", 
+        query: { data: JSON.stringify(item) }
+      });
+    },
+    validateDates() {
+      if (this.filters.start_date && this.filters.end_date) {
+        if (this.filters.end_date < this.filters.start_date) {
+          Swal.fire("Alerta", "La fecha fin debe ser mayor o igual a la fecha inicio.", "warning");
+          this.filters.end_date = "";
         }
       }
     }
   }
+};
 
 </script>

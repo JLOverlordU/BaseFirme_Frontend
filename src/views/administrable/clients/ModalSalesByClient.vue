@@ -144,10 +144,10 @@
 <script>
 
 import CModalDepositsSale from "./ModalDepositsSale.vue";
-import {list} from '../../../assets/js/methods/functions.js'
+import {list} from "../../../assets/js/methods/functions.js";
 
 export default {
-  name: 'ModalClientBySales',
+  name: "ModalClientBySales",
   components: {
     CModalDepositsSale,
   },
@@ -165,14 +165,14 @@ export default {
       type: Array,
       default() {
         return [
-            { key: "index", label: "#" },
-            { key: "consecutive", label: "Venta" },
-            { key: "date", label: "Día" },
-            { key: "subtotal", label: "Total Venta" },
-            { key: "deposit", label: "Depositó" },
-            { key: "debt", label: "Deuda" },
-            { key: "buttonSelect", label: "Pagar", _style: "min-width:20%;" },
-            { key: "buttonView", label: "Ver", _style: "min-width:20%;" },
+          { key: "index", label: "#" },
+          { key: "consecutive", label: "Venta" },
+          { key: "date", label: "Día" },
+          { key: "subtotal", label: "Total Venta" },
+          { key: "deposit", label: "Depositó" },
+          { key: "debt", label: "Deuda" },
+          { key: "buttonSelect", label: "Pagar", _style: "min-width:20%;" },
+          { key: "buttonView", label: "Ver", _style: "min-width:20%;" },
         ];
       },
     },
@@ -182,7 +182,7 @@ export default {
       prefix: "sales_by_client",
       sale: null,
       sales: [],
-      types: ['ambos', 'pendientes', 'finalizadas'],
+      types: ["ambos", "pendientes", "finalizadas"],
       filters: {
         consecutive: "",
         client: 0,
@@ -261,11 +261,11 @@ export default {
     sendViewSale(item) {
 
       const routeData = this.$router.resolve({ 
-        name: 'Detalle venta', 
+        name: "Detalle venta", 
         query: { data: JSON.stringify(item) }
       });
 
-      window.open(routeData.href, '_blank');
+      window.open(routeData.href, "_blank");
 
     },
     formatFloat(value) {
